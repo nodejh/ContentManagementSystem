@@ -8,6 +8,8 @@ class App extends Component {
   }
 
   render() {
+    console.log(' this.props: ', this.props);
+    console.log(' this.props.CONTEXT: ', this.context);
     return (
       <h1>pos123123t</h1>
     );

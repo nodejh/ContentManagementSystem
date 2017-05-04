@@ -19,6 +19,10 @@ class App extends Component {
   }
 
   render() {
+    // eslint-disable-next-line
+    console.log(' this.context: ', this.context);
+    // eslint-disable-next-line
+    const pathname = window.location.pathname;
     return (
       <Sidebar
         colorIndex="neutral-1" size="small"
@@ -39,16 +43,19 @@ class App extends Component {
         </Header>
         <Box flex="grow" justify="start">
           <Menu primary>
-            <Anchor href="/post" className="active">
+            <Anchor href="/" className={pathname === '/' && 'active'}>
               所有活动
             </Anchor>
-            <Anchor href="#">
-              我的发布
-            </Anchor>
-            <Anchor href="#">
+            <Anchor href="/post" className={pathname === '/post' && 'active'}>
               发布活动
             </Anchor>
-            <Anchor href="#">
+            <Anchor href="/mime" className={pathname === '/mime' && 'active'}>
+              我的发布
+            </Anchor>
+            <Anchor href="/join" className={pathname === '/join' && 'active'}>
+              我的参与
+            </Anchor>
+            <Anchor href="/user" className={pathname === '/user' && 'active'}>
               个人中心
             </Anchor>
           </Menu>
