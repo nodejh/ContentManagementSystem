@@ -7,6 +7,8 @@ import Search from 'grommet/components/Search';
 import MenuIcon from 'grommet/components/icons/base/Menu';
 import { title } from './utils/constants';
 import Sidebar from './components/Sidebar/Sidebar';
+import Login from './routes/Login';
+import Sign from './routes/Sign';
 import Post from './routes/Post';
 
 
@@ -78,6 +80,8 @@ class App extends Component {
                     />
                   </Box>
                 </Header>
+                <Route path="/login" component={Login} />
+                <Route path="/sign" component={Sign} />
                 <Route path="/post" component={Post} />
               </div>
             )

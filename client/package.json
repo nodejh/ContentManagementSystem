@@ -6,7 +6,6 @@
     "babel-plugin-import": "^1.1.1",
     "es6-promise": "^4.1.0",
     "grommet": "^1.4.0",
-    "grommet-css": "^1.0.0",
     "isomorphic-fetch": "^2.2.1",
     "prop-types": "^15.5.8",
     "react": "^15.5.4",
@@ -91,5 +90,6 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  }
+  },
+  "proxy": "http://localhost:6000"
 }

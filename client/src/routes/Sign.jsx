@@ -5,12 +5,13 @@ import Form from 'grommet/components/Form';
 import Header from 'grommet/components/Header';
 import Heading from 'grommet/components/Heading';
 import Footer from 'grommet/components/Footer';
+import Toast from 'grommet/components/Toast';
 import FormField from 'grommet/components/FormField';
 import TextInput from 'grommet/components/TextInput';
 import Button from 'grommet/components/Button';
 import LoginIcon from 'grommet/components/icons/base/Login';
 import { regexpPhone } from './../utils/constants';
-import { login } from './../models/login';
+import { sign } from './../models/login';
 
 
 class App extends Component {
@@ -24,10 +25,18 @@ class App extends Component {
       error: { // 表单数据错误消息
         phone: null,
         password: null,
+        code: null,
+      },
+      toast: {
+        size: 'medium', // small|medium|large
+        status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
+        message: null,
+        show: false, // 是否显示 toast
       },
     };
     this.onDOMChange = this.onDOMChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onGetCode = this.onGetCode.bind(this);
   }
 
 
@@ -45,10 +54,22 @@ class App extends Component {
   }
 
   onSubmit() {
-    const { phone, password } = this.state.form;
+    const { phone, password, code } = this.state.form;
     if (!regexpPhone.test(phone)) {
       const { error } = this.state;
       error.phone = '手机号格式错误';
+      this.setState({ error });
+      return false;
+    }
+    if (!code) {
+      const { error } = this.state;
+      error.code = '请填写验证码';
+      this.setState({ error });
+      return false;
+    }
+    if (code.length !== 4) {
+      const { error } = this.state;
+      error.code = '请填写正确的验证码';
       this.setState({ error });
       return false;
     }
@@ -58,7 +79,35 @@ class App extends Component {
       this.setState({ error });
       return false;
     }
-    this.handleLogin({ phone, password });
+    this.handleSign({ phone, password, code });
+    return true;
+  }
+
+
+  /**
+   * 获取短信验证码
+   */
+  onGetCode(event) {
+    // 阻止默认事件和冒泡
+    event.preventDefault();
+    event.stopPropagation();
+    const { phone } = this.state.form;
+    if (!phone) {
+      const { error } = this.state;
+      error.phone = '请填写手机号';
+      this.setState({ error });
+      return false;
+    }
+    if (!regexpPhone.test(phone)) {
+      const { error } = this.state;
+      error.phone = '手机号格式错误';
+      this.setState({ error });
+      return false;
+    }
+    const { toast } = this.state;
+    toast.message = '验证码已发送至您的手机，请注意查收';
+    toast.show = true;
+    this.setState({ toast });
     return true;
   }
 
@@ -67,10 +116,10 @@ class App extends Component {
    * @param {object} payload { phone, password }
    * @return {Promise.<void>} null
    */
-  async handleLogin(payload) {
+  async handleSign(payload) {
     this.setState({ loading: true });
     try {
-      const res = await login(payload);
+      const res = await sign(payload);
       console.log('res: ', res);
       this.setState({ loading: false });
     } catch (e) {
@@ -81,13 +130,13 @@ class App extends Component {
 
 
   render() {
-    const { error } = this.state;
+    const { error, toast } = this.state;
     return (
       <Box justify="center" align="center" wrap style={{ margin: 20 }}>
         <Form>
           <Header>
             <Heading>
-              登录
+              注册
             </Heading>
           </Header>
           <FormField label="手机号" error={error.phone}>
@@ -96,11 +145,45 @@ class App extends Component {
               onDOMChange={event => this.onDOMChange(event, 'phone')}
             />
           </FormField>
-          <FormField label="密码" error={error.password}>
+          <FormField label="验证码" error={error.code}>
+            <Box
+              direction="row"
+              justify="between"
+              align="center"
+              margin="medium"
+              wrap={false}
+              reverse={false}
+              style={{
+                marginTop: 0,
+                marginBottom: 0,
+                display: 'flex',
+                flexWrap: 'nowrap',
+                flexDirection: 'row',
+              }}
+            >
+              <TextInput
+                type="password"
+                onDOMChange={event => this.onDOMChange(event, 'code')}
+                style={{ display: 'flex', flex: 1 }}
+              />
+              <Button
+                label="获取验证码"
+                onClick={this.onGetCode}
+                primary={false}
+                accent={false}
+                secondary={false}
+                plain
+                style={{
+                  display: 'flex', flex: 1, fontSize: '.8em',
+                }}
+              />
+            </Box>
+          </FormField>
+          <FormField label="设置密码" error={error.password}>
             <TextInput
               type="password"
               onDOMChange={event => this.onDOMChange(event, 'password')}
-              placeHolder="请输入您的密码"
+              placeHolder="请设置您的密码"
             />
           </FormField>
           <Footer pad={{ vertical: 'medium' }}>
@@ -116,7 +199,16 @@ class App extends Component {
             />
           </Footer>
         </Form>
-        <Link to="/sign" style={{ marginTop: 20 }}>没有账号？注册</Link>
+        <Link to="/sign" style={{ marginTop: 20 }}>已有账号？登录</Link>
+        {
+          toast.show ? (
+            <Toast
+              status={toast.status}
+            >
+              {toast.message}
+            </Toast>
+          ) : null
+        }
       </Box>
     );
   }
