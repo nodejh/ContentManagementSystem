@@ -7,6 +7,7 @@ import Search from 'grommet/components/Search';
 import MenuIcon from 'grommet/components/icons/base/Menu';
 import { title } from './utils/constants';
 import Sidebar from './components/Sidebar/Sidebar';
+import Index from './routes/Index';
 import Login from './routes/Login';
 import Sign from './routes/Sign';
 import Post from './routes/Post';
@@ -52,14 +53,14 @@ class App extends Component {
           showSidebar ?
             <Sidebar onSidebarBackClick={this.onSidebarBackClick} /> :
             (
-              <div style={{ padding: '0 10px' }}>
+              <div style={{ backgroundColor: '#eee' }}>
                 <Header
                   fixed
                   float={false}
                   splash={false}
                 >
                   <MenuIcon
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', marginLeft: 20 }}
                     onClick={this.onMenuIconClick}
                   />
                   <Title>
@@ -70,7 +71,7 @@ class App extends Component {
                     justify="end"
                     direction="row"
                     responsive={false}
-                    style={{ marginRight: 10 }}
+                    style={{ marginRight: 20 }}
                   >
                     <Search
                       inline
@@ -80,9 +81,12 @@ class App extends Component {
                     />
                   </Box>
                 </Header>
-                <Route path="/login" component={Login} />
-                <Route path="/sign" component={Sign} />
-                <Route path="/post" component={Post} />
+                <div style={{ margin: '20px 0 50px 0' }}>
+                  <Route exact path="/" component={Index} />
+                  <Route path="/login" component={Login} />
+                  <Route path="/sign" component={Sign} />
+                  <Route path="/post" component={Post} />
+                </div>
               </div>
             )
         }
