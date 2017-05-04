@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
 import Header from 'grommet/components/Header';
 import Title from 'grommet/components/Tile';
 import Box from 'grommet/components/Box';
@@ -6,6 +7,7 @@ import Search from 'grommet/components/Search';
 import MenuIcon from 'grommet/components/icons/base/Menu';
 import { title } from './utils/constants';
 import Sidebar from './components/Sidebar/Sidebar';
+import Post from './routes/Post';
 
 
 class App extends Component {
@@ -45,35 +47,40 @@ class App extends Component {
     return (
       <div>
         {
-          showSidebar ? <Sidebar onSidebarBackClick={this.onSidebarBackClick} /> : (
-            <Header
-              fixed
-              float
-              splash={false}
-            >
-              <MenuIcon
-                style={{ margin: 10, cursor: 'pointer' }}
-                onClick={this.onMenuIconClick}
-              />
-              <Title>
-                {title}
-              </Title>
-              <Box
-                flex
-                justify="end"
-                direction="row"
-                responsive={false}
-                style={{ marginRight: 10 }}
-              >
-                <Search
-                  inline
-                  fill
-                  size="medium"
-                  placeHolder="请输入您要搜索的内容"
-                />
-              </Box>
-            </Header>
-          )
+          showSidebar ?
+            <Sidebar onSidebarBackClick={this.onSidebarBackClick} /> :
+            (
+              <div style={{ padding: '0 10px' }}>
+                <Header
+                  fixed
+                  float={false}
+                  splash={false}
+                >
+                  <MenuIcon
+                    style={{ cursor: 'pointer' }}
+                    onClick={this.onMenuIconClick}
+                  />
+                  <Title>
+                    {title}
+                  </Title>
+                  <Box
+                    flex
+                    justify="end"
+                    direction="row"
+                    responsive={false}
+                    style={{ marginRight: 10 }}
+                  >
+                    <Search
+                      inline
+                      fill
+                      size="medium"
+                      placeHolder="请输入您要搜索的内容"
+                    />
+                  </Box>
+                </Header>
+                <Route path="/post" component={Post} />
+              </div>
+            )
         }
       </div>
     );

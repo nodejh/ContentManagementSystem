@@ -7,8 +7,7 @@ import Box from 'grommet/components/Box';
 import Menu from 'grommet/components/Menu';
 import Anchor from 'grommet/components/Anchor';
 import Footer from 'grommet/components/Footer';
-import Button from 'grommet/components/Button';
-import UserIcon from 'grommet/components/icons/base/User';
+import LogoutIcon from 'grommet/components/icons/base/Logout';
 import LinkPreviousIcon from 'grommet/components/icons/base/LinkPrevious';
 import { title } from './../../utils/constants';
 
@@ -21,14 +20,17 @@ class App extends Component {
 
   render() {
     return (
-      <Sidebar colorIndex="neutral-1" size="small" style={{ width: '80%', maxWidth: 300 }}>
+      <Sidebar
+        colorIndex="neutral-1" size="small"
+        fixed
+        full
+      >
         <Header
           pad="medium"
           justify="between"
         >
           <Title
             responsive={false}
-            style={{ width: '80%', maxWidth: 280 }}
             onClick={this.props.onSidebarBackClick}
           >
             <LinkPreviousIcon colorIndex="light-1" />
@@ -37,7 +39,7 @@ class App extends Component {
         </Header>
         <Box flex="grow" justify="start">
           <Menu primary>
-            <Anchor href="#" className="active">
+            <Anchor href="/post" className="active">
               所有活动
             </Anchor>
             <Anchor href="#">
@@ -46,10 +48,13 @@ class App extends Component {
             <Anchor href="#">
               发布活动
             </Anchor>
+            <Anchor href="#">
+              个人中心
+            </Anchor>
           </Menu>
         </Box>
         <Footer pad="medium">
-          <Button icon={<UserIcon colorIndex="light-1" />} />
+          <LogoutIcon colorIndex="light-1" style={{ cursor: 'pointer' }} />
         </Footer>
       </Sidebar>
     );
