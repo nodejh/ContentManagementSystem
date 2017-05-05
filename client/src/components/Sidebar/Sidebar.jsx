@@ -61,7 +61,10 @@ class App extends Component {
           </Menu>
         </Box>
         <Footer pad="medium">
-          <LogoutIcon colorIndex="light-1" style={{ cursor: 'pointer' }} />
+          <Anchor href="/login">
+            登录
+            <LogoutIcon colorIndex="light-1" style={{ cursor: 'pointer' }} />
+          </Anchor>
         </Footer>
       </Sidebar>
     );
