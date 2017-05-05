@@ -1,5 +1,5 @@
 const config = {
-  port: 6000,
+  port: 4000,
   mysql: {
     host: 'localhost',
     user: 'root',
