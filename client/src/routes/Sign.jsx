@@ -11,7 +11,7 @@ import TextInput from 'grommet/components/TextInput';
 import Button from 'grommet/components/Button';
 import LoginIcon from 'grommet/components/icons/base/Login';
 import { regexpPhone } from './../utils/constants';
-import { sign } from '../models/user';
+import { getCode, sign } from './../models/user';
 
 
 class App extends Component {
@@ -87,7 +87,7 @@ class App extends Component {
   /**
    * 获取短信验证码
    */
-  onGetCode(event) {
+  async onGetCode(event) {
     // 阻止默认事件和冒泡
     event.preventDefault();
     event.stopPropagation();
@@ -104,6 +104,10 @@ class App extends Component {
       this.setState({ error });
       return false;
     }
+
+
+    const res = await getCode(phone);
+    console.log('res: ', res);
     const { toast } = this.state;
     toast.message = '验证码已发送至您的手机，请注意查收';
     toast.show = true;

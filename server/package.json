@@ -29,7 +29,6 @@
     "eslint-plugin-react": "^6.10.3"
   },
   "dependencies": {
-    "alidayu-node-sdk": "^1.0.2",
     "ejs": "^2.5.6",
     "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
@@ -37,6 +36,7 @@
     "koa-router": "^7.1.1",
     "koa-static": "^3.0.0",
     "koa-views": "^6.0.2",
-    "mysql": "^2.13.0"
+    "mysql": "^2.13.0",
+    "node-alidayu-sms": "^1.0.1"
   }
 }
