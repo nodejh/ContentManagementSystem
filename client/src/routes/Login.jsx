@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import Loadable from 'react-loading-overlay';
 import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
 import Header from 'grommet/components/Header';
@@ -8,10 +9,10 @@ import Footer from 'grommet/components/Footer';
 import FormField from 'grommet/components/FormField';
 import TextInput from 'grommet/components/TextInput';
 import Button from 'grommet/components/Button';
+import Toast from 'grommet/components/Toast';
 import LoginIcon from 'grommet/components/icons/base/Login';
 import { regexpPhone } from './../utils/constants';
-import { login } from '../models/user';
-
+import { login } from './../models/user';
 
 class App extends Component {
   constructor(props) {
@@ -25,6 +26,14 @@ class App extends Component {
         phone: null,
         password: null,
       },
+      toast: {
+        size: 'medium', // small|medium|large
+        status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
+        message: null,
+        show: false, // 是否显示 toast
+      },
+      loading: false,
+      isLoginSuccess: false,
     };
     this.onDOMChange = this.onDOMChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -44,7 +53,7 @@ class App extends Component {
     this.setState({ form });
   }
 
-  onSubmit() {
+  async onSubmit() {
     const { phone, password } = this.state.form;
     if (!regexpPhone.test(phone)) {
       const { error } = this.state;
@@ -58,66 +67,99 @@ class App extends Component {
       this.setState({ error });
       return false;
     }
-    this.handleLogin({ phone, password });
+
+    const { toast } = this.state;
+    let isLoginSuccess = this.state;
+    this.setState({ loading: true });
+    try {
+      const res = await login({ phone, password });
+      // console.log('res: ', res);
+      if (res.success) {
+        toast.status = 'ok';
+        toast.message = '登录成功';
+        isLoginSuccess = true;
+      } else {
+        toast.status = 'critical';
+        toast.message = res.message;
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.status = 'critical';
+      toast.message = exception.message || '登录失败，请重试';
+    } finally {
+      toast.show = true;
+      this.setState({ toast, loading: false, isLoginSuccess });
+    }
     return true;
   }
 
-  /**
-   * 登录操作
-   * @param {object} payload { phone, password }
-   * @return {Promise.<void>} null
-   */
-  async handleLogin(payload) {
-    this.setState({ loading: true });
-    try {
-      const res = await login(payload);
-      console.log('res: ', res);
-      this.setState({ loading: false });
-    } catch (e) {
-      console.log('e: ', e);
-      this.setState({ loading: false });
-    }
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
   }
 
 
   render() {
-    const { error } = this.state;
+    const { error, toast, loading, isLoginSuccess } = this.state;
     return (
-      <Box justify="center" align="center" wrap style={{ margin: 20 }}>
-        <Form>
-          <Header>
-            <Heading>
-              登录
-            </Heading>
-          </Header>
-          <FormField label="手机号" error={error.phone}>
-            <TextInput
-              placeHolder="请输入您的手机号"
-              onDOMChange={event => this.onDOMChange(event, 'phone')}
-            />
-          </FormField>
-          <FormField label="密码" error={error.password}>
-            <TextInput
-              type="password"
-              onDOMChange={event => this.onDOMChange(event, 'password')}
-              placeHolder="请输入您的密码"
-            />
-          </FormField>
-          <Footer pad={{ vertical: 'medium' }}>
-            <Button
-              icon={<LoginIcon />}
-              label="注册"
-              onClick={this.onSubmit}
-              primary
-              secondary={false}
-              accent={false}
-              critical={false}
-              plain={false}
-            />
-          </Footer>
-        </Form>
-        <Link to="/sign" style={{ marginTop: 20 }}>没有账号？注册</Link>
-      </Box>
+      <Loadable
+        active={loading}
+        spinner
+        animate
+        style={{ height: '100%', width: '100%', position: 'fixed' }}
+      >
+        <Box justify="center" align="center" wrap style={{ margin: 20 }}>
+          <Form>
+            <Header>
+              <Heading>
+                登录
+              </Heading>
+            </Header>
+            <FormField label="手机号" error={error.phone}>
+              <TextInput
+                placeHolder="请输入您的手机号"
+                onDOMChange={event => this.onDOMChange(event, 'phone')}
+              />
+            </FormField>
+            <FormField label="密码" error={error.password}>
+              <TextInput
+                type="password"
+                onDOMChange={event => this.onDOMChange(event, 'password')}
+                placeHolder="请输入您的密码"
+              />
+            </FormField>
+            <Footer pad={{ vertical: 'medium' }}>
+              <Button
+                icon={<LoginIcon />}
+                label="注册"
+                onClick={this.onSubmit}
+                primary
+                secondary={false}
+                accent={false}
+                critical={false}
+                plain={false}
+              />
+            </Footer>
+          </Form>
+          <Link to="/sign" style={{ marginTop: 20 }}>没有账号？注册</Link>
+        </Box>
+
+        {
+          toast.show && (
+            <Toast
+              status={toast.status}
+              onClose={this.hideToast}
+            >
+              {toast.message}
+            </Toast>
+          )
+        }
+
+        {
+          isLoginSuccess && <Redirect to="/user" />
+        }
+      </Loadable>
     );
   }
 }

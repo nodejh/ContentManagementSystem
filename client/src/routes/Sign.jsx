@@ -161,7 +161,7 @@ class App extends Component {
 
   render() {
     const { error, toast, loading, isSignSuccess } = this.state;
-    console.log('toast: ', toast);
+    // console.log('toast: ', toast);
     return (
       <Loadable
         active={loading}

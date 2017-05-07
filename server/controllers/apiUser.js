@@ -59,7 +59,30 @@ const sign = async (ctx) => {
 };
 
 
+const login = async (ctx) => {
+  const result = { success: false, message: '' };
+  const { phone, password } = ctx.request.body;
+  try {
+    const user = await query('select password, id from users where phone = ?', phone);
+    if (user.length === 0) {
+      result.message = '手机号不存在';
+    } else if (user[0].password === password) {
+      ctx.session.user = { phone, id: user[0].id };
+      result.success = true;
+    } else {
+      result.success = false; // 密码错误
+      result.message = '密码错误';
+    }
+  } catch (exception) {
+    result.message = exception.message || '手机号或密码错误';
+  } finally {
+    ctx.body = result;
+  }
+};
+
+
 module.exports = {
   getCode,
   sign,
+  login,
 };

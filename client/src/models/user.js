@@ -37,7 +37,7 @@ const login = async (payload) => {
     body: JSON.stringify(payload),
     credentials: 'include',
   };
-  return request('/api/v0.1/login', options);
+  return request('/api/v0.1/user/login', options);
 };
 
 
