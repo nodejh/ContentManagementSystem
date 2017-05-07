@@ -1,37 +1,65 @@
 const sendMessage = require('./../utils/sendMessage');
+const randomMSMCode = require('./../utils/random').randomMSMCode;
+const query = require('./../utils/mysql').query;
 
 
 const getCode = async (ctx) => {
-  const { phone } = ctx.request.query;
-  // const options = {
-  //   sms_free_sign_name: '乐学乐教',
-  //   rec_num: phone,
-  //   sms_template_code: 'SMS_8150325',
-  //   sms_param: { code: '123456' },
-  // };
-  const params = {
-    extend: '123456',
-    sms_type: 'normal',
-    sms_free_sign_name: '乐学乐教',
-    rec_num: phone,
-    sms_template_code: 'SMS_8150325',
-    sms_param: {
-      customer: 'Ray',
-      code: '123456',
-    },
-  };
+  const result = { success: false, code: '', message: '' };
+  try {
+    const { phone } = ctx.request.query;
+    const code = randomMSMCode(6);
+    const params = {
+      extend: '123456',
+      sms_type: 'normal',
+      sms_free_sign_name: '乐学乐教',
+      rec_num: phone,
+      sms_template_code: 'SMS_8150325',
+      sms_param: {
+        customer: 'Ray',
+        code,
+      },
+    };
+    const { result: sendResult } = await sendMessage(params);
+    if (sendResult.err_code === '0') {
+      ctx.session.user = { phone, code };
+      result.success = true;
+      result.code = code;
+    }
+  } catch (e) {
+    result.message = e.message || '发送短信验证码失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+};
+
+
+const sign = async (ctx) => {
+  const result = { success: false, message: '' };
+  const { phone, code, password } = ctx.request.body;
+  const { phone: phoneValide, code: codeValide } = ctx.session.user;
+  console.log('phoneValide: ', phoneValide);
+  console.log('codeValide: ', codeValide);
   console.log('phone: ', phone);
-  const sendResult = sendMessage(params);
-  console.log('sendResult: ', sendResult);
-  ctx.body = {
-    success: true,
-    data: {
-      code: 111,
-    },
-  };
+  console.log('code: ', code);
+  try {
+    if (phone === phoneValide && code === codeValide) {
+      const values = { phone, password };
+      const sql = 'insert into users set ?';
+      const insertRes = await query(sql, [values]);
+      ctx.session.user.id = insertRes.insertId;
+      result.success = true;
+    } else {
+      result.message = '验证码错误，请重试';
+    }
+  } catch (exception) {
+    result.message = exception.message || '注册失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
 };
 
 
 module.exports = {
   getCode,
+  sign,
 };

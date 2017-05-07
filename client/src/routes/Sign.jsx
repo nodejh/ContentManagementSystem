@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import Loadable from 'react-loading-overlay';
 import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
 import Header from 'grommet/components/Header';
@@ -33,10 +34,13 @@ class App extends Component {
         message: null,
         show: false, // 是否显示 toast
       },
+      loading: false,
+      isSignSuccess: false,
     };
     this.onDOMChange = this.onDOMChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onGetCode = this.onGetCode.bind(this);
+    this.hideToast = this.hideToast.bind(this);
   }
 
 
@@ -53,7 +57,7 @@ class App extends Component {
     this.setState({ form });
   }
 
-  onSubmit() {
+  async onSubmit() {
     const { phone, password, code } = this.state.form;
     if (!regexpPhone.test(phone)) {
       const { error } = this.state;
@@ -67,7 +71,7 @@ class App extends Component {
       this.setState({ error });
       return false;
     }
-    if (code.length !== 4) {
+    if (code.length !== 6) {
       const { error } = this.state;
       error.code = '请填写正确的验证码';
       this.setState({ error });
@@ -79,7 +83,28 @@ class App extends Component {
       this.setState({ error });
       return false;
     }
-    this.handleSign({ phone, password, code });
+    const { toast } = this.state;
+    let isSignSuccess = this.state;
+    this.setState({ loading: true });
+    try {
+      const res = await sign({ phone, password, code });
+      // console.log('res: ', res);
+      if (res.success) {
+        toast.status = 'ok';
+        toast.message = '注册成功';
+        isSignSuccess = true;
+      } else {
+        toast.status = 'critical';
+        toast.message = res.message;
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.status = 'critical';
+      toast.message = exception.message || '注册失败，请重试';
+    } finally {
+      toast.show = true;
+      this.setState({ toast, loading: false, isSignSuccess });
+    }
     return true;
   }
 
@@ -105,115 +130,129 @@ class App extends Component {
       return false;
     }
 
-
-    const res = await getCode(phone);
-    console.log('res: ', res);
+    this.setState({ loading: true });
     const { toast } = this.state;
-    toast.message = '验证码已发送至您的手机，请注意查收';
-    toast.show = true;
-    this.setState({ toast });
+    try {
+      const res = await getCode(phone);
+      if (res.success) {
+        toast.status = 'ok';
+        toast.message = '验证码已发送至您的手机，请注意查收';
+      } else {
+        toast.status = 'critical';
+        toast.message = res.message;
+      }
+    } catch (exception) {
+      toast.status = 'critical';
+      toast.message = exception.message || '验证码发送失败，请重试';
+    } finally {
+      toast.show = true;
+      this.setState({ toast, loading: false });
+    }
     return true;
   }
 
-  /**
-   * 登录操作
-   * @param {object} payload { phone, password }
-   * @return {Promise.<void>} null
-   */
-  async handleSign(payload) {
-    this.setState({ loading: true });
-    try {
-      const res = await sign(payload);
-      console.log('res: ', res);
-      this.setState({ loading: false });
-    } catch (e) {
-      console.log('e: ', e);
-      this.setState({ loading: false });
-    }
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
   }
 
 
   render() {
-    const { error, toast } = this.state;
+    const { error, toast, loading, isSignSuccess } = this.state;
+    console.log('toast: ', toast);
     return (
-      <Box justify="center" align="center" wrap style={{ margin: 20 }}>
-        <Form>
-          <Header>
-            <Heading>
-              注册
-            </Heading>
-          </Header>
-          <FormField label="手机号" error={error.phone}>
-            <TextInput
-              placeHolder="请输入您的手机号"
-              onDOMChange={event => this.onDOMChange(event, 'phone')}
-            />
-          </FormField>
-          <FormField label="验证码" error={error.code}>
-            <Box
-              direction="row"
-              justify="between"
-              align="center"
-              margin="medium"
-              wrap={false}
-              reverse={false}
-              style={{
-                marginTop: 0,
-                marginBottom: 0,
-                display: 'flex',
-                flexWrap: 'nowrap',
-                flexDirection: 'row',
-              }}
-            >
+      <Loadable
+        active={loading}
+        spinner
+        animate
+        style={{ height: '100%', width: '100%', position: 'fixed' }}
+      >
+        <Box justify="center" align="center" wrap style={{ margin: 20 }}>
+          <Form>
+            <Header>
+              <Heading>
+                注册
+              </Heading>
+            </Header>
+            <FormField label="手机号" error={error.phone}>
+              <TextInput
+                placeHolder="请输入您的手机号"
+                onDOMChange={event => this.onDOMChange(event, 'phone')}
+              />
+            </FormField>
+            <FormField label="验证码" error={error.code}>
+              <Box
+                direction="row"
+                justify="between"
+                align="center"
+                margin="medium"
+                wrap={false}
+                reverse={false}
+                style={{
+                  marginTop: 0,
+                  marginBottom: 0,
+                  display: 'flex',
+                  flexWrap: 'nowrap',
+                  flexDirection: 'row',
+                }}
+              >
+                <TextInput
+                  type="password"
+                  onDOMChange={event => this.onDOMChange(event, 'code')}
+                  style={{ display: 'flex', flex: 1 }}
+                />
+                <Button
+                  label="获取验证码"
+                  onClick={this.onGetCode}
+                  primary={false}
+                  accent={false}
+                  secondary={false}
+                  plain
+                  style={{
+                    display: 'flex', flex: 1, fontSize: '.8em',
+                  }}
+                />
+              </Box>
+            </FormField>
+            <FormField label="设置密码" error={error.password}>
               <TextInput
                 type="password"
-                onDOMChange={event => this.onDOMChange(event, 'code')}
-                style={{ display: 'flex', flex: 1 }}
+                onDOMChange={event => this.onDOMChange(event, 'password')}
+                placeHolder="请设置您的密码"
               />
+            </FormField>
+            <Footer pad={{ vertical: 'medium' }}>
               <Button
-                label="获取验证码"
-                onClick={this.onGetCode}
-                primary={false}
-                accent={false}
+                icon={<LoginIcon />}
+                label="注册"
+                onClick={this.onSubmit}
+                primary
                 secondary={false}
-                plain
-                style={{
-                  display: 'flex', flex: 1, fontSize: '.8em',
-                }}
+                accent={false}
+                critical={false}
+                plain={false}
               />
-            </Box>
-          </FormField>
-          <FormField label="设置密码" error={error.password}>
-            <TextInput
-              type="password"
-              onDOMChange={event => this.onDOMChange(event, 'password')}
-              placeHolder="请设置您的密码"
-            />
-          </FormField>
-          <Footer pad={{ vertical: 'medium' }}>
-            <Button
-              icon={<LoginIcon />}
-              label="注册"
-              onClick={this.onSubmit}
-              primary
-              secondary={false}
-              accent={false}
-              critical={false}
-              plain={false}
-            />
-          </Footer>
-        </Form>
-        <Link to="/sign" style={{ marginTop: 20 }}>已有账号？登录</Link>
-        {
-          toast.show ? (
-            <Toast
-              status={toast.status}
-            >
-              {toast.message}
-            </Toast>
-          ) : null
-        }
-      </Box>
+            </Footer>
+          </Form>
+          <Link to="/sign" style={{ marginTop: 20 }}>已有账号？登录 {toast.show}</Link>
+          {
+            toast.show && (
+              <Toast
+                status={toast.status}
+                onClose={this.hideToast}
+              >
+                {toast.message}
+              </Toast>
+            )
+          }
+
+          {
+            isSignSuccess && <Redirect to="/user" />
+          }
+        </Box>
+      </Loadable>
     );
   }
 }

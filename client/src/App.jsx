@@ -22,6 +22,8 @@ class App extends Component {
     };
     this.onMenuIconClick = this.onMenuIconClick.bind(this);
     this.onSidebarBackClick = this.onSidebarBackClick.bind(this);
+    this.handleShowLoading = this.handleShowLoading.bind(this);
+    this.handleHideLoading = this.handleHideLoading.bind(this);
   }
 
 
@@ -43,6 +45,28 @@ class App extends Component {
   onSidebarBackClick() {
     this.setState({
       showSidebar: false,
+    });
+  }
+
+
+  /**
+   * SHOW LOADING
+   */
+  handleShowLoading() {
+    this.setState({
+      ...this.state.loading,
+      active: true,
+    });
+  }
+
+
+  /**
+   * HIDE LOADING
+   */
+  handleHideLoading() {
+    this.setState({
+      ...this.state.loading,
+      active: true,
     });
   }
 

@@ -1,7 +1,6 @@
 const router = require('koa-router')();
 
 const index = require('./index');
-const api = require('./api');
 const apiUser = require('./apiUser');
 
 
