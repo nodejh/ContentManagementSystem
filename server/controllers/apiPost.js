@@ -41,10 +41,10 @@ const list = async (ctx) => {
   result.auth = true;
   try {
     const sql = 'select * from posts';
-    const list = await query(sql);
+    const postList = await query(sql);
     result.message = '获取任务列表成功';
     result.success = true;
-    result.list = list;
+    result.list = postList;
   } catch (exception) {
     console.log('exception: ', exception);
     result.message = exception.message || '获取任务列表失败，请重试';
