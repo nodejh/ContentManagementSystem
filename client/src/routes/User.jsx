@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import Box from 'grommet/components/Box';
-import Form from 'grommet/components/Form';
 import Header from 'grommet/components/Header';
 import Heading from 'grommet/components/Heading';
-import Footer from 'grommet/components/Footer';
-import Button from 'grommet/components/Button';
-import FormFields from 'grommet/components/FormFields';
-import FormField from 'grommet/components/FormField';
-import TextInput from 'grommet/components/TextInput';
-import Select from 'grommet/components/Select';
-
+import Toast from 'grommet/components/Toast';
+import UserInfo from './../components/User/Info';
+import UserEdit from './../components/User/Edit';
+import { getInfo } from './../models/user';
 
 class App extends Component {
   constructor(props) {
@@ -29,81 +25,92 @@ class App extends Component {
         major: null,
         introduce: null,
       },
+      info: {},
+      toast: {
+        size: 'medium', // small|medium|large
+        status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
+        message: null,
+        show: false, // 是否显示 toast
+      },
+      loading: false,
+      editable: false,
     };
-    this.onDOMChange = this.onDOMChange.bind(this);
-    this.onSelectChange = this.onSelectChange.bind(this);
+    this.showEdit = this.showEdit.bind(this);
+    this.hideEdit = this.hideEdit.bind(this);
+    this.hideToast = this.hideToast.bind(this);
+    this.handleGetInfo = this.handleGetInfo.bind(this);
   }
 
 
-  /**
-   * 监听输入框 DOM 改变事件，并获取输入框的值，更新 state
-   * @param {object} event DOM 事件
-   * @param {string} key  需要更新的 state 的 key
-   */
-  onDOMChange(event, key) {
-    const { value } = event.target;
-    const { form, error } = this.state;
-    form[key] = value;
-    error[key] = null;
-    this.setState({ form });
+  componentWillMount() {
+    this.handleGetInfo();
   }
 
-  /**
-   * 监听日期点击事件
-   * @param {string} value 日期
-   * @param {string} key startDate/endDate
-   */
-  onSelectChange(event, key) {
-    console.log('value: ', event.value);
-    const { form, error } = this.state;
-    form[key] = event.value;
-    error[key] = null;
-    this.setState({ form });
+  async handleGetInfo() {
+    const { toast } = this.state;
+    let { info } = this.state;
+    try {
+      const res = await getInfo();
+      if (res.success) {
+        info = res.info;
+      } else if (!res.auth) {
+        toast.status = 'critical';
+        toast.message = res.message;
+        toast.show = true;
+      } else {
+        toast.status = 'critical';
+        toast.message = res.message || '获取个人信息失败，请重试';
+        toast.show = true;
+      }
+    } catch (exception) {
+      toast.status = 'critical';
+      toast.show = true;
+      toast.message = exception.message || '获取个人信息失败，请重试';
+    } finally {
+      this.setState({ toast, loading: false, info });
+    }
+  }
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
+  }
+
+  showEdit() {
+    this.setState({ editable: true });
+  }
+
+  hideEdit() {
+    this.setState({ editable: false });
   }
 
   render() {
-    const { form, error } = this.state;
+    const { editable, toast, info } = this.state;
     return (
       <Box justify="center" align="center" wrap style={{ margin: 20 }}>
-        <Form>
-          <Header>
-            <Heading>
-              个人中心
-            </Heading>
-          </Header>
-          <FormFields>
-            <FormField label="手机号" error={error.phone}>
-              <TextInput placeHolder="请填写您的手机号" value={form.phone} onDOMChange={event => this.onDOMChange(event, 'phone')} />
-            </FormField>
-            <FormField label="名字" error={error.name}>
-              <TextInput placeHolder="请填写您的名字" value={form.name} onDOMChange={event => this.onDOMChange(event, 'name')} />
-            </FormField>
-            <FormField label="学校" error={error.school}>
-              <TextInput placeHolder="请填写您的学校" value={form.school}onDOMChange={event => this.onDOMChange(event, 'school')} />
-            </FormField>
-            <FormField label="专业" error={error.major}>
-              <Select
-                placeHolder="请选择您的专业"
-                multiple={false}
-                inline={false}
-                options={['理', '工', '农', '医', '商']}
-                value={form.major}
-                onChange={event => this.onSelectChange(event, 'major')}
-              />
-            </FormField>
-            <FormField label="个人简介" error={error.introduce}>
-              <TextInput placeHolder="请填写您的个人简介" value={form.introduce}onDOMChange={event => this.onDOMChange(event, 'introduce')} />
-            </FormField>
-          </FormFields>
-          <Footer pad={{ vertical: 'medium' }}>
-            <Button
-              label="更新"
-              type="submit"
-              primary
-              // onClick={...}
-            />
-          </Footer>
-        </Form>
+        <Header>
+          <Heading>
+            个人中心
+          </Heading>
+        </Header>
+        {
+          editable ?
+            <UserEdit hideEdit={this.hideEdit} info={info} />
+            :
+            <UserInfo showEdit={this.showEdit} info={info} />
+        }
+
+        {
+          toast.show && (
+            <Toast
+              status={toast.status}
+              onClose={this.hideToast}
+            >
+              {toast.message}
+            </Toast>
+          )
+        }
       </Box>
     );
   }

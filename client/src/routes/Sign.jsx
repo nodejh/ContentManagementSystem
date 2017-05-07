@@ -94,11 +94,13 @@ class App extends Component {
         toast.message = '注册成功';
         isSignSuccess = true;
       } else {
+        isSignSuccess = false;
         toast.status = 'critical';
         toast.message = res.message;
       }
     } catch (exception) {
       // console.log('exception: ', exception);
+      isSignSuccess = false;
       toast.status = 'critical';
       toast.message = exception.message || '注册失败，请重试';
     } finally {
@@ -236,7 +238,7 @@ class App extends Component {
               />
             </Footer>
           </Form>
-          <Link to="/sign" style={{ marginTop: 20 }}>已有账号？登录 {toast.show}</Link>
+          <Link to="/login" style={{ marginTop: 20 }}>已有账号？登录 {toast.show}</Link>
           {
             toast.show && (
               <Toast

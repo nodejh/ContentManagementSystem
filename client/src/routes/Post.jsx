@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
 import Header from 'grommet/components/Header';
@@ -10,6 +11,8 @@ import FormField from 'grommet/components/FormField';
 import TextInput from 'grommet/components/TextInput';
 import DateTime from 'grommet/components/DateTime';
 import Anchor from 'grommet/components/Anchor';
+import Toast from 'grommet/components/Toast';
+import { insert } from './../models/post';
 
 
 class App extends Component {
@@ -17,13 +20,29 @@ class App extends Component {
     super(props);
     this.state = {
       form: {
+        title: null,
+        description: null,
         startDate: null,
         endDate: null,
       },
+      toast: {
+        size: 'medium', // small|medium|large
+        status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
+        message: null,
+        show: false, // 是否显示 toast
+      },
     };
     this.onDateChange = this.onDateChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.hideToast = this.hideToast.bind(this);
   }
 
+
+  onDOMChange(event, key) {
+    const { form } = this.state;
+    form[key] = event.target.value;
+    this.setState({ form });
+  }
 
   /**
    * 监听日期点击事件
@@ -36,8 +55,48 @@ class App extends Component {
     this.setState({ form });
   }
 
+
+  /**
+   * 发布任务
+   */
+  async onSubmit() {
+    // console.log('this.state: ', this.state);
+    const { form: values, toast } = this.state;
+    try {
+      console.log('values: ', values);
+      values.startDate = moment(values.startDate).format();
+      values.startDate = moment(values.startDate).format();
+      console.log('values: ', values);
+      const res = await insert({ values });
+      if (res.success) {
+        toast.show = true;
+        toast.message = '发布成功';
+        toast.status = 'ok';
+        this.setState({ toast });
+      } else {
+        toast.show = true;
+        toast.status = 'critical';
+        toast.message = '发布失败，请重试';
+        this.setState({ toast });
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '发布失败，请重试';
+      this.setState({ toast });
+    }
+  }
+
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
+  }
+
   render() {
-    const { form } = this.state;
+    const { form, toast } = this.state;
     return (
       <Box justify="center" align="center" wrap style={{ margin: 20 }}>
         <Form>
@@ -48,7 +107,10 @@ class App extends Component {
           </Header>
           <FormFields>
             <FormField label="任务标题">
-              <TextInput placeHolder="请填写任务标题" />
+              <TextInput
+                placeHolder="请填写任务标题"
+                onDOMChange={event => this.onDOMChange(event, 'title')}
+              />
             </FormField>
             <FormField
               label="任务描述"
@@ -56,7 +118,10 @@ class App extends Component {
                 <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor></p>
               }
             >
-              <textarea placeholder="请填写任务描述" rows="5" />
+              <TextInput
+                placeHolder="请填写任务标题"
+                onDOMChange={event => this.onDOMChange(event, 'description')}
+              />
             </FormField>
             <FormField label="开始日期">
               <DateTime
@@ -78,12 +143,23 @@ class App extends Component {
           <Footer pad={{ vertical: 'medium' }}>
             <Button
               label="发布"
-              type="submit"
+              type="button"
               primary
-              // onClick={...}
+              onClick={this.onSubmit}
             />
           </Footer>
         </Form>
+
+        {
+          toast.show && (
+            <Toast
+              status={toast.status}
+              onClose={this.hideToast}
+            >
+              {toast.message}
+            </Toast>
+          )
+        }
       </Box>
     );
   }

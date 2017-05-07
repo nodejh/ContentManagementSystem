@@ -37,10 +37,6 @@ const sign = async (ctx) => {
   const result = { success: false, message: '' };
   const { phone, code, password } = ctx.request.body;
   const { phone: phoneValide, code: codeValide } = ctx.session.user;
-  console.log('phoneValide: ', phoneValide);
-  console.log('codeValide: ', codeValide);
-  console.log('phone: ', phone);
-  console.log('code: ', code);
   try {
     if (phone === phoneValide && code === codeValide) {
       const values = { phone, password };
@@ -59,6 +55,11 @@ const sign = async (ctx) => {
 };
 
 
+/**
+ * login
+ * @param ctx
+ * @return {Promise.<void>}
+ */
 const login = async (ctx) => {
   const result = { success: false, message: '' };
   const { phone, password } = ctx.request.body;
@@ -68,6 +69,7 @@ const login = async (ctx) => {
       result.message = '手机号不存在';
     } else if (user[0].password === password) {
       ctx.session.user = { phone, id: user[0].id };
+      console.log('ctx.session.user: ', ctx.session.user);
       result.success = true;
     } else {
       result.success = false; // 密码错误
@@ -81,8 +83,87 @@ const login = async (ctx) => {
 };
 
 
+/**
+ * logout
+ * @param ctx
+ * @return {Promise.<void>}
+ */
+const logout = async (ctx) => {
+  const result = { success: true, message: '退出登录成功' };
+  ctx.session.user = null;
+  ctx.body = result;
+};
+
+
+/**
+ * 获取个人信息
+ * @param ctx
+ * @return {Promise.<boolean>}
+ */
+const info = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { id } = ctx.session.user;
+    const res = await query('select * from users where id = ?', [id]);
+    if (res.length === 0) {
+      result.message = '用户不存在';
+    } else {
+      result.info = res[0];
+      result.success = true;
+      result.message = '获取个人信息成功';
+    }
+  } catch (exception) {
+    result.message = exception.message || '获取个人信息失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
+/**
+ * update
+ * @param ctx
+ * @return {Promise.<boolean>}
+ */
+const update = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  const { values } = ctx.request.body;
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { id } = ctx.session.user;
+    const res = await query('update users set ? where id = ?', [values, id]);
+    if (res.length === 0) {
+      result.message = '用户不存在';
+    } else {
+      result.success = true;
+      result.message = '更新个人信息成功';
+    }
+  } catch (exception) {
+    result.message = exception.message || '更新个人信息失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   getCode,
   sign,
   login,
+  info,
+  logout,
+  update,
 };
