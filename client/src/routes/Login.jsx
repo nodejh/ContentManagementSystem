@@ -132,7 +132,7 @@ class App extends Component {
             <Footer pad={{ vertical: 'medium' }}>
               <Button
                 icon={<LoginIcon />}
-                label="注册"
+                label="登录"
                 onClick={this.onSubmit}
                 primary
                 secondary={false}

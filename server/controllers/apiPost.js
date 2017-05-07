@@ -33,12 +33,12 @@ const insert = async (ctx) => {
 
 const list = async (ctx) => {
   const result = { success: false, message: '', auth: false };
-  if (!(ctx.session.user && ctx.session.user.id)) {
-    result.message = '请登录后再操作';
-    ctx.body = result;
-    return false;
-  }
-  result.auth = true;
+  // if (!(ctx.session.user && ctx.session.user.id)) {
+  //   result.message = '请登录后再操作';
+  //   ctx.body = result;
+  //   return false;
+  // }
+  // result.auth = true;
   try {
     const sql = 'select * from posts';
     const postList = await query(sql);
