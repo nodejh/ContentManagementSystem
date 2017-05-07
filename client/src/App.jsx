@@ -54,7 +54,7 @@ class App extends Component {
           showSidebar ?
             <Sidebar onSidebarBackClick={this.onSidebarBackClick} /> :
             (
-              <div style={{ backgroundColor: '#eee' }}>
+              <div style={{ backgroundColor: '#fff' }}>
                 <Header
                   fixed
                   float={false}

@@ -4,14 +4,21 @@ import request from './../utils/request';
  * 判断用户是否登录
  * @return {Promise} 是否登录
  */
-const isLogin = async () => request('/api/v0.1/isLogin');
+const isLogin = async () => request('/api/v0.1/user/isLogin');
 
 
 /**
  * 退出登录
  * @return {Promise} 退出登录
  */
-const logout = async () => request('/api/v0.1/logout');
+const logout = async () => request('/api/v0.1/user/logout');
+
+
+/**
+ * Get message code by phone
+ * @param {string} phone
+ */
+const getCode = async phone => request(`/api/v0.1/user/getCode?phone=${phone}`);
 
 
 /**
@@ -50,12 +57,13 @@ const sign = async (payload) => {
     body: JSON.stringify(payload),
     credentials: 'include',
   };
-  return request('/api/v0.1/sign', options);
+  return request('/api/v0.1/user/sign', options);
 };
 
 
 export {
   isLogin,
+  getCode,
   login,
   logout,
   sign,

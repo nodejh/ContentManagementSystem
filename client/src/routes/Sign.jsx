@@ -11,7 +11,7 @@ import TextInput from 'grommet/components/TextInput';
 import Button from 'grommet/components/Button';
 import LoginIcon from 'grommet/components/icons/base/Login';
 import { regexpPhone } from './../utils/constants';
-import { sign } from './../models/login';
+import { sign } from '../models/user';
 
 
 class App extends Component {

@@ -10,7 +10,7 @@ import TextInput from 'grommet/components/TextInput';
 import Button from 'grommet/components/Button';
 import LoginIcon from 'grommet/components/icons/base/Login';
 import { regexpPhone } from './../utils/constants';
-import { login } from './../models/login';
+import { login } from '../models/user';
 
 
 class App extends Component {
