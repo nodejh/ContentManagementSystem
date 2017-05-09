@@ -49,10 +49,10 @@ class App extends Component {
         this.setState({ toast });
       }
     } catch (exception) {
-      console.log('exception: ', exception);
+      // console.log('exception: ', exception);
       toast.show = true;
       toast.status = 'critical';
-      toast.message = exception.message || '发布失败，请重试';
+      toast.message = exception.message || '获取任务列表失败，请重试';
       this.setState({ toast });
     }
   }
@@ -88,8 +88,6 @@ class App extends Component {
         {
           // eslint-disable-next-line
           postList.map((item) => {
-            console.log('item: ', item);
-            console.log(moment(new Date(item.start_date)).format('MMMM DD YYYY h:mm:ss'));
             return (
               <Card
                 key={item.id}
@@ -114,7 +112,7 @@ class App extends Component {
                   />
                 }
                 headingStrong={false}
-                link={<Link to="#">查看详情</Link>}
+                link={<Link to={`/detail/${item.id}`}>查看详情</Link>}
                 style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
               />
             );

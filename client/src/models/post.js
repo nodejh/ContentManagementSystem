@@ -18,7 +18,10 @@ const insert = async (payload) => {
 const list = async () => request('/api/v0.1/post/list');
 
 
+const detailById = async id => request(`/api/v0.1/post/detail/${id}`);
+
 export {
   insert,
   list,
+  detailById,
 };
