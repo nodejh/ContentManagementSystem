@@ -31,7 +31,7 @@ class App extends Component {
             <div>
               <p>{`学校:${info.school}  专业:${info.major}`}</p>
               <p>{info.introduce}</p>
-              <p>{`注册时间 ${moment(info.datetime).format('MMMM Do YYYY, h:mm:ss a')}`}</p>
+              <p>{`注册时间:${moment(info.datetime).format('MMMM Do YYYY, h:mm:ss a')}`}</p>
             </div>
           }
           headingStrong={false}

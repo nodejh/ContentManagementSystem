@@ -10,6 +10,6 @@ textarea {
     outline: none;
 }
 
-.FixItem .grommetux-form-field__contents {
+.grommetux-form-field__contents {
     margin-right: 24px;
 }

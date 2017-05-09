@@ -104,6 +104,7 @@ const isLogin = async (ctx) => {
   const result = { success: true, message: 'not login', isLogin: false };
   if (ctx.session.user && ctx.session.user.id) {
     result.isLogin = true;
+    result.message = 'login';
   }
   ctx.body = result;
 };
