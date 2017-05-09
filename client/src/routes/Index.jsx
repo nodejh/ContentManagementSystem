@@ -167,7 +167,7 @@ class App extends Component {
         }
 
         {
-          !isNotLogin && <Redirect to="/login" />
+          isNotLogin && <Redirect to="/login" />
         }
       </Box>
     );
