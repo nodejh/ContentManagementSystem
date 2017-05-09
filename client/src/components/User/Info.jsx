@@ -29,9 +29,9 @@ class App extends Component {
           heading={info.name}
           description={
             <div>
-              <p>{info.school} {info.major}</p>
+              <p>{`学校:${info.school}  专业:${info.major}`}</p>
               <p>{info.introduce}</p>
-              <p>{moment(info.datetime).format('MMMM Do YYYY, h:mm:ss a')}</p>
+              <p>{`注册时间 ${moment(info.datetime).format('MMMM Do YYYY, h:mm:ss a')}`}</p>
             </div>
           }
           headingStrong={false}

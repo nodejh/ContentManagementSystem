@@ -6,3 +6,10 @@ body {
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
+textarea {
+    outline: none;
+}
+
+.FixItem .grommetux-form-field__contents {
+    margin-right: 24px;
+}

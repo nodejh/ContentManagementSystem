@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import TextareaAutosize from 'react-textarea-autosize';
 import Form from 'grommet/components/Form';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
@@ -137,10 +138,14 @@ class App extends Component {
               onChange={event => this.onSelectChange(event, 'major')}
             />
           </FormField>
-          <FormField label="个人简介" error={error.introduce}>
-            <TextInput
-              placeHolder="请填写您的个人简介" value={form.introduce}
-              onDOMChange={event => this.onDOMChange(event, 'introduce')}
+          <FormField label="个人简介" error={error.introduce} className="FixItem">
+            <TextareaAutosize
+              style={{ marginTop: 20 }}
+              useCacheForDOMMeasurements
+              minRows={3}
+              maxRows={6}
+              value={form.introduce}
+              onChange={event => this.onDOMChange(event, 'introduce')}
             />
           </FormField>
         </FormFields>
