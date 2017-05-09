@@ -56,6 +56,31 @@ const list = async (ctx) => {
 };
 
 
+const myList = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const userId = ctx.session.user.id;
+    const sql = 'select * from posts where uid = ? order by id desc';
+    const postList = await query(sql, [userId]);
+    result.message = '获取任务列表成功';
+    result.success = true;
+    result.list = postList;
+  } catch (exception) {
+    console.log('exception: ', exception);
+    result.message = exception.message || '获取任务列表失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 const detailById = async (ctx) => {
   const result = { success: false, message: '', isLogin: false };
   if (!(ctx.session.user && ctx.session.user.id)) {
@@ -89,5 +114,6 @@ const detailById = async (ctx) => {
 module.exports = {
   insert,
   list,
+  myList,
   detailById,
 };

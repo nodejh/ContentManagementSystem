@@ -11,6 +11,7 @@ import Index from './routes/Index';
 import Login from './routes/Login';
 import Sign from './routes/Sign';
 import Post from './routes/Post';
+import MyPost from './routes/MyPost';
 import PostDetail from './routes/PostDetail';
 import User from './routes/User';
 
@@ -112,6 +113,7 @@ class App extends Component {
                   <Route path="/login" component={Login} />
                   <Route path="/sign" component={Sign} />
                   <Route path="/post" component={Post} />
+                  <Route path="/myPost" component={MyPost} />
                   <Route path="/detail/:id" component={PostDetail} />
                   <Route path="/user" component={User} />
                 </div>

@@ -49,7 +49,7 @@ class App extends Component {
             <Anchor href="/post" className={pathname === '/post' && 'active'}>
               发布任务
             </Anchor>
-            <Anchor href="/mime" className={pathname === '/mime' && 'active'}>
+            <Anchor href="/myPost" className={pathname === '/myPost' && 'active'}>
               我的发布
             </Anchor>
             <Anchor href="/join" className={pathname === '/join' && 'active'}>
