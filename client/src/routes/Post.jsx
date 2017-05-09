@@ -1,6 +1,8 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Loadable from 'react-loading-overlay';
+import FileUpload from 'react-fileupload';
 import TextareaAutosize from 'react-textarea-autosize';
 import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
@@ -14,6 +16,8 @@ import TextInput from 'grommet/components/TextInput';
 import DateTime from 'grommet/components/DateTime';
 import Anchor from 'grommet/components/Anchor';
 import Toast from 'grommet/components/Toast';
+import UploadIcon from 'grommet/components/icons/base/Upload';
+import { checkSize, checkIsImage } from './../utils/file';
 import { isLogin } from './../models/user';
 import { insert } from './../models/post';
 
@@ -26,6 +30,8 @@ class App extends Component {
       isNotLogin: false,
       isPostSuccess: false, // 发布成功，跳转到我的发布列表
       form: {
+        picture: null,
+        pictureName: null,
         title: null,
         description: null,
         startDate: new Date(),
@@ -48,6 +54,24 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.hideToast = this.hideToast.bind(this);
     this.checkIsLogin = this.checkIsLogin.bind(this);
+    this.checkUploadImg = this.checkUploadImg.bind(this);
+    this.handleUploadSuccess = this.handleUploadSuccess.bind(this);
+    this.handleUploadFailed = this.handleUploadFailed.bind(this);
+    this.uploadOptions = {
+      baseUrl: '/api/v0.1/upload',
+      multiple: true,
+      numberLimit: 1,
+      accept: 'image/*',
+      chooseAndUpload: true,
+      withCredentials: true,
+      credentials: 'include',
+      wrapperDisplay: 'inline-block',
+      beforeUpload: this.checkUploadImg,
+      uploading: this.handleUploading,
+      uploadSuccess: this.handleUploadSuccess,
+      uploadFail: this.handleUploadFailed,
+      uploadError: this.handleUploadFailed,
+    };
   }
 
 
@@ -55,6 +79,65 @@ class App extends Component {
     this.checkIsLogin();
   }
 
+  /*上传前的信息保存的验证*/
+  checkUploadImg(files) {
+    const file = files[0];
+    const { size, name } = file;
+    const { toast, form } = this.state;
+    if (!checkIsImage(name)) {
+      console.log('toast: ', toast);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = '仅支持图片上传';
+      this.setState({ toast, loading: false });
+      return false;
+    }
+    if (!checkSize(size)) {
+      console.log('toast: ', toast);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = '暂不支持上传大于 20M 的文件';
+      this.setState({ toast, loading: false });
+      return false;
+    }
+    form.pictureName = name;
+    this.setState({ loading: true, form });
+    return true;
+  }
+
+
+  /**
+   * upload success
+   * @param {object} respArr { success, formData, fileType, fileName, message }
+   */
+  handleUploadSuccess(respArr) {
+    console.log('respArr: ', respArr);
+    const { toast, form } = this.state;
+    form.picture = respArr.fileName;
+    toast.show = true;
+    toast.message = '上传封面图成功';
+    toast.status = 'ok';
+    this.setState({ loading: false, toast, form });
+  }
+
+  /**
+   * upload failed
+   * @param err
+   */
+  handleUploadFailed(err) {
+    const { toast } = this.state;
+    toast.show = true;
+    toast.status = 'critical';
+    toast.message = err.message || '上传文件失败，请重试';
+    this.setState({ toast, loading: false });
+  }
+
+
+  /**
+   * form data change
+   * @param event
+   * @param key
+   */
   onDOMChange(event, key) {
     const { form } = this.state;
     form[key] = event.target.value;
@@ -179,6 +262,14 @@ class App extends Component {
                     发布任务
                   </Heading>
                 </Header>
+                <FormField label="上传封面图">
+                  <FileUpload options={this.uploadOptions} ref="fileUpload" style={{ padding: 20 }}>
+                    <div ref="chooseAndUpload">
+                      <Button icon={<UploadIcon />} label="点击上传"/>
+                      { form.picture && form.pictureName }
+                    </div>
+                  </FileUpload>
+                </FormField>
                 <FormFields>
                   <FormField label="任务标题" error={error.title}>
                     <TextInput
