@@ -96,6 +96,20 @@ const logout = async (ctx) => {
 
 
 /**
+ * check user if is login
+ * @param ctx
+ * @return {Promise.<void>}
+ */
+const isLogin = async (ctx) => {
+  const result = { success: true, message: 'not login', isLogin: false };
+  if (ctx.session.user && ctx.session.user.id) {
+    result.isLogin = true;
+  }
+  ctx.body = result;
+};
+
+
+/**
  * 获取个人信息
  * @param ctx
  * @return {Promise.<boolean>}
@@ -165,5 +179,6 @@ module.exports = {
   login,
   info,
   logout,
+  isLogin,
   update,
 };

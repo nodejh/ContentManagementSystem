@@ -39,10 +39,11 @@ app.use(views(path.join(__dirname, './views'), {
   extension: 'ejs',
 }));
 
+
 // 初始化路由中间件
 app.use(routers.routes()).use(routers.allowedMethods());
 app.use(async (ctx) => {
-  const title = 'Home Page';
+  const title = '首页';
   await ctx.render('index', {
     title,
   });

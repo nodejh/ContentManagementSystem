@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import moment from 'moment';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
 import Timestamp from 'grommet/components/Timestamp';
 import { list } from './../models/post';
+import { isLogin } from './../models/user';
 
 class App extends Component {
   constructor(props) {
@@ -18,13 +19,16 @@ class App extends Component {
         show: false, // 是否显示 toast
       },
       list: [],
+      isNotLogin: false,
     };
 
     this.getList = this.getList.bind(this);
+    this.checkIsLogin = this.checkIsLogin.bind(this);
   }
 
 
   componentWillMount() {
+    this.checkIsLogin();
     this.getList();
   }
 
@@ -49,8 +53,15 @@ class App extends Component {
     }
   }
 
+  async checkIsLogin() {
+    const res = await isLogin();
+    if (!res.isLogin) {
+      this.setState({ isNotLogin: true });
+    }
+  }
+
   render() {
-    const { toast, list: postList } = this.state;
+    const { toast, list: postList, isNotLogin } = this.state;
     return (
       <Box
         direction="row"
@@ -153,6 +164,10 @@ class App extends Component {
               {toast.message}
             </Toast>
           )
+        }
+
+        {
+          !isNotLogin && <Redirect to="/login" />
         }
       </Box>
     );

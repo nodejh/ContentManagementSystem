@@ -3,6 +3,7 @@ const router = require('koa-router')();
 const apiUser = require('../controllers/apiUser');
 
 
+router.get('/isLogin', apiUser.isLogin);
 router.get('/getCode', apiUser.getCode);
 router.post('/sign', apiUser.sign);
 router.get('/logout', apiUser.logout);
