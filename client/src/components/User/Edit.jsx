@@ -57,7 +57,7 @@ class App extends Component {
    * @param {string} key startDate/endDate
    */
   onSelectChange(event, key) {
-    console.log('value: ', event.value);
+    // console.log('value: ', event.value);
     const { form, error } = this.state;
     form[key] = event.value;
     error[key] = null;
@@ -67,10 +67,10 @@ class App extends Component {
   async handleSubmit() {
     const { form, toast } = this.state;
     try {
-      console.log('form: ', form);
+      // console.log('form: ', form);
       delete form.datetime;
       delete form.id;
-      console.log('form: ', form);
+      // console.log('form: ', form);
       const res = await update({ values: form });
       if (res.success) {
         toast.status = 'ok';
@@ -86,7 +86,7 @@ class App extends Component {
         this.setState({ toast });
       }
     } catch (exception) {
-      console.log('exception: ', exception);
+      // console.log('exception: ', exception);
       toast.status = 'critical';
       toast.message = exception.message || '更新个人信息失败';
       toast.show = true;

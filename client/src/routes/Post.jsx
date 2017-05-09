@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import moment from 'moment';
+import Loadable from 'react-loading-overlay';
+import TextareaAutosize from 'react-textarea-autosize';
 import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
 import Header from 'grommet/components/Header';
@@ -21,11 +22,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       isNotLogin: false,
+      isPostSuccess: false, // 发布成功，跳转到我的发布列表
       form: {
         title: null,
         description: null,
-        startDate: null,
+        startDate: new Date(),
         endDate: null,
       },
       toast: {
@@ -33,6 +36,12 @@ class App extends Component {
         status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
         message: null,
         show: false, // 是否显示 toast
+      },
+      error: { // 表单数据错误消息
+        title: null,
+        startDate: null,
+        endDate: null,
+        description: null,
       },
     };
     this.onDateChange = this.onDateChange.bind(this);
@@ -58,8 +67,9 @@ class App extends Component {
    * @param {string} key startDate/endDate
    */
   onDateChange(value, key) {
+    console.log('value: ', value);
     const { form } = this.state;
-    form[key] = value;
+    form[key] = new Date(value);
     this.setState({ form });
   }
 
@@ -70,30 +80,59 @@ class App extends Component {
   async onSubmit() {
     // console.log('this.state: ', this.state);
     const { form: values, toast } = this.state;
+    if (!values.title) {
+      const { error } = this.state;
+      error.title = '标题不能为空';
+      this.setState({ error });
+      return false;
+    }
+    if (!values.startDate) {
+      const { error } = this.state;
+      error.startDate = '开始时间不能为空';
+      this.setState({ error });
+      return false;
+    }
+    if (!values.endDate) {
+      const { error } = this.state;
+      error.endDate = '结束时间不能为空';
+      this.setState({ error });
+      return false;
+    }
+    if (!values.description) {
+      const { error } = this.state;
+      error.description = '描述不能为空';
+      this.setState({ error });
+      return false;
+    }
+    const data = {
+      title: values.title,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      description: values.description,
+    };
     try {
-      console.log('values: ', values);
-      values.startDate = moment(values.startDate).format();
-      values.startDate = moment(values.startDate).format();
-      console.log('values: ', values);
-      const res = await insert({ values });
+      console.log('data: ', data);
+      this.setState({ loading: true });
+      const res = await insert({ values: data });
       if (res.success) {
         toast.show = true;
         toast.message = '发布成功';
         toast.status = 'ok';
-        this.setState({ toast });
+        this.setState({ toast, loading: false, isPostSuccess: true });
       } else {
         toast.show = true;
         toast.status = 'critical';
         toast.message = '发布失败，请重试';
-        this.setState({ toast });
+        this.setState({ toast, loading: false });
       }
     } catch (exception) {
       // console.log('exception: ', exception);
       toast.show = true;
       toast.status = 'critical';
       toast.message = exception.message || '发布失败，请重试';
-      this.setState({ toast });
+      this.setState({ toast, loading: false });
     }
+    return true;
   }
 
 
@@ -112,63 +151,15 @@ class App extends Component {
   }
 
   render() {
-    const { form, toast, isNotLogin } = this.state;
+    const { loading, form, toast, error, isNotLogin, isPostSuccess } = this.state;
     return (
-      <Box justify="center" align="center" wrap style={{ margin: 20 }}>
-        { isNotLogin ? <Redirect to="/login" />
-          : (
-            <Form>
-              <Header>
-                <Heading>
-                  发布任务
-                </Heading>
-              </Header>
-              <FormFields>
-                <FormField label="任务标题">
-                  <TextInput
-                    placeHolder="请填写任务标题"
-                    onDOMChange={event => this.onDOMChange(event, 'title')}
-                  />
-                </FormField>
-                <FormField
-                  label="任务描述"
-                  help={
-                    <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor></p>
-                  }
-                >
-                  <TextInput
-                    placeHolder="请填写任务标题"
-                    onDOMChange={event => this.onDOMChange(event, 'description')}
-                  />
-                </FormField>
-                <FormField label="开始日期">
-                  <DateTime
-                    id="date"
-                    name="startDate"
-                    value={form.startDate}
-                    onChange={value => this.onDateChange(value, 'startDate')}
-                  />
-                </FormField>
-                <FormField label="结束日期">
-                  <DateTime
-                    id="id"
-                    name="endDate"
-                    value={form.endDate}
-                    onChange={value => this.onDateChange(value, 'endDate')}
-                  />
-                </FormField>
-              </FormFields>
-              <Footer pad={{ vertical: 'medium' }}>
-                <Button
-                  label="发布"
-                  type="button"
-                  primary
-                  onClick={this.onSubmit}
-                />
-              </Footer>
-            </Form>
-          )
-        }
+      <Loadable
+        active={loading}
+        spinner
+        animate
+        style={loading ? { height: '100%', width: '100%', position: 'fixed' } : { width: '100%' }}
+      >
+        {isPostSuccess && <Redirect to="/mime" />}
         {
           toast.show && (
             <Toast
@@ -179,7 +170,70 @@ class App extends Component {
             </Toast>
           )
         }
-      </Box>
+        <Box justify="center" align="center" wrap style={{ margin: 20 }}>
+          { isNotLogin ? <Redirect to="/login" />
+            : (
+              <Form>
+                <Header>
+                  <Heading>
+                    发布任务
+                  </Heading>
+                </Header>
+                <FormFields>
+                  <FormField label="任务标题" error={error.title}>
+                    <TextInput
+                      placeHolder="请填写任务标题"
+                      onDOMChange={event => this.onDOMChange(event, 'title')}
+                    />
+                  </FormField>
+                  <FormField label="开始日期" error={error.startDate}>
+                    <DateTime
+                      id="date"
+                      name="startDate"
+                      format="MM/DD/YYYY HH:mm:ss"
+                      value={form.startDate}
+                      onChange={value => this.onDateChange(value, 'startDate')}
+                    />
+                  </FormField>
+                  <FormField label="结束日期" error={error.endDate}>
+                    <DateTime
+                      id="id"
+                      name="endDate"
+                      format="MM/DD/YYYY HH:mm:ss"
+                      value={form.endDate}
+                      onChange={value => this.onDateChange(value, 'endDate')}
+                    />
+                  </FormField>
+                </FormFields>
+                <FormField
+                  label="任务描述"
+                  help={
+                    <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
+                    </p>
+                  }
+                  error={error.description}
+                >
+                  <TextareaAutosize
+                    style={{ marginTop: 20 }}
+                    useCacheForDOMMeasurements
+                    minRows={3}
+                    maxRows={6}
+                    onChange={event => this.onDOMChange(event, 'description')}
+                  />
+                </FormField>
+                <Footer pad={{ vertical: 'medium' }}>
+                  <Button
+                    label="发布"
+                    type="button"
+                    primary
+                    onClick={this.onSubmit}
+                  />
+                </Footer>
+              </Form>
+            )
+          }
+        </Box>
+      </Loadable>
     );
   }
 }

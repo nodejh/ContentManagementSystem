@@ -16,7 +16,7 @@ const insert = async (ctx) => {
       title: values.title,
       description: values.description,
       start_date: new Date(values.startDate),
-      end_date: new Date(values.end_date),
+      end_date: new Date(values.endDate),
     };
     const sql = 'insert into posts set ?';
     await query(sql, [data]);
