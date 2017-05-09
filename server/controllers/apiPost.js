@@ -17,6 +17,7 @@ const insert = async (ctx) => {
       description: values.description,
       start_date: new Date(values.startDate),
       end_date: new Date(values.endDate),
+      picture: values.picture,
     };
     const sql = 'insert into posts set ?';
     await query(sql, [data]);
@@ -33,14 +34,14 @@ const insert = async (ctx) => {
 
 const list = async (ctx) => {
   const result = { success: false, message: '', auth: false };
-  // if (!(ctx.session.user && ctx.session.user.id)) {
-  //   result.message = '请登录后再操作';
-  //   ctx.body = result;
-  //   return false;
-  // }
-  // result.auth = true;
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
   try {
-    const sql = 'select * from posts';
+    const sql = 'select * from posts order by id desc';
     const postList = await query(sql);
     result.message = '获取任务列表成功';
     result.success = true;

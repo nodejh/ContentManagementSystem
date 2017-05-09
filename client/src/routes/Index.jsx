@@ -4,7 +4,7 @@ import moment from 'moment';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
-import Timestamp from 'grommet/components/Timestamp';
+import Markdown from 'grommet/components/Markdown';
 import { list } from './../models/post';
 import { isLogin } from './../models/user';
 
@@ -75,92 +75,6 @@ class App extends Component {
         wrap
       >
         { isNotLogin && <Redirect to="/login" /> }
-
-        {
-          // eslint-disable-next-line
-          postList.map((item, index) => {
-            console.log('item: ', item);
-            return (
-              <Card
-                // eslint-disable-next-line
-                key={index}
-                // thumbnail="http://cdn.huodongxing.com/Content/app/appom/762680785432170.jpg"
-                label={<Timestamp value={moment(new Date(item.start_date)).format('MMMM Do YYYY, h:mm:ss a')} />}
-                heading={item.title}
-                description={item.description}
-                headingStrong={false}
-                link={<Link to="#">查看详情</Link>}
-                style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-              />
-            );
-          })
-        }
-        <Card
-          thumbnail="http://cdn.huodongxing.com/Content/app/appom/762680785432170.jpg"
-          label={<Timestamp value="2017-05-04T22:29:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        <Card
-          label={<Timestamp value="2017-05-04T22:50:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        <Card
-          thumbnail="http://cdn.huodongxing.com/Content/app/appom/302673478827376.jpg"
-          label={<Timestamp value="2017-05-04T22:50:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          video={{ source: 'http://v.youku.com/v_show/id_XMjc0MzQyMDMwOA==.html', type: 'mp4' }}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        <Card
-          thumbnail="http://cdn.huodongxing.com/Content/app/appom/762680785432170.jpg"
-          label={<Timestamp value="2017-05-04T22:29:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        <Card
-          label={<Timestamp value="2017-05-04T22:50:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        <Card
-          thumbnail="http://cdn.huodongxing.com/Content/app/appom/302673478827376.jpg"
-          label={<Timestamp value="2017-05-04T22:50:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          video={{ source: 'http://v.youku.com/v_show/id_XMjc0MzQyMDMwOA==.html', type: 'mp4' }}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        <Card
-          thumbnail="http://cdn.huodongxing.com/Content/app/appom/302673478827376.jpg"
-          label={<Timestamp value="2017-05-04T22:50:18.124Z" />}
-          heading="任务内容"
-          description="任务描述"
-          headingStrong={false}
-          link={<Link to="#">查看详情</Link>}
-          video={{ source: 'http://v.youku.com/v_show/id_XMjc0MzQyMDMwOA==.html', type: 'mp4' }}
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-
-
         {
           toast.show && (
             <Toast
@@ -170,6 +84,41 @@ class App extends Component {
               {toast.message}
             </Toast>
           )
+        }
+        {
+          // eslint-disable-next-line
+          postList.map((item) => {
+            console.log('item: ', item);
+            console.log(moment(new Date(item.start_date)).format('MMMM DD YYYY h:mm:ss'));
+            return (
+              <Card
+                key={item.id}
+                thumbnail={item.picture && `/upload/album/${item.picture}`}
+                label={
+                  (
+                    <p>
+                      {moment(item.start_date).format('YYYY/M/D h:mm:ss')}
+                      <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
+                      {moment(item.end_date).format('YYYY/M/D h:mm:ss')}
+                    </p>
+                  )
+                }
+                heading={item.title}
+                description={
+                  <Markdown
+                    // eslint-disable-next-line
+                    content={item.description ?
+                      item.description.length > 100 ?
+                        `${item.description.substring(0, 100)}...` : item.description
+                      : ''}
+                  />
+                }
+                headingStrong={false}
+                link={<Link to="#">查看详情</Link>}
+                style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
+              />
+            );
+          })
         }
       </Box>
     );

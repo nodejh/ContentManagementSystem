@@ -192,6 +192,7 @@ class App extends Component {
       startDate: values.startDate,
       endDate: values.endDate,
       description: values.description,
+      picture: values.picture,
     };
     try {
       console.log('data: ', data);
