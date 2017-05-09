@@ -7,13 +7,15 @@ import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
 import Markdown from 'grommet/components/Markdown';
 import PostJoin from './../components/Post/Join';
-import { detailById } from './../models/post';
+import PostSign from './../components/Post/Sign';
+import { detailById, isJoin } from './../models/post';
 import { isLogin } from './../models/user';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isJoin: false,
       toast: {
         size: 'medium', // small|medium|large
         status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
@@ -26,6 +28,7 @@ class App extends Component {
 
     this.getPostDetailById = this.getPostDetailById.bind(this);
     this.checkIsLogin = this.checkIsLogin.bind(this);
+    this.checkIsJoin = this.checkIsJoin.bind(this);
   }
 
 
@@ -36,6 +39,7 @@ class App extends Component {
 
   componentDidMount() {
     this.getPostDetailById();
+    this.checkIsJoin();
   }
 
   async getPostDetailById() {
@@ -74,8 +78,32 @@ class App extends Component {
     }
   }
 
+  async checkIsJoin() {
+    const { toast } = this.state;
+    const { id } = this.props.match.params;
+    try {
+      const res = await isJoin(id);
+      console.log('res: ', res);
+      if (res.success) {
+        if (res.isJoin) {
+          this.setState({ isJoin: true });
+        }
+      } else {
+        toast.show = true;
+        toast.status = 'critical';
+        toast.message = res.message || '查询失败，请重新进入该页面';
+      }
+    } catch (exception) {
+      console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '查询失败，请重新进入该页面';
+      this.setState({ toast });
+    }
+  }
+
   render() {
-    const { toast, post, isNotLogin } = this.state;
+    const { toast, post, isNotLogin, isJoin: stateIsJoin } = this.state;
     const { id } = this.props.match.params;
     return (
       <Box
@@ -117,7 +145,7 @@ class App extends Component {
           headingStrong
           style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
         />
-        <PostJoin id={id} />
+        { stateIsJoin ? <PostSign id={id} /> : <PostJoin id={id} />}
       </Box>
     );
   }

@@ -146,10 +146,74 @@ const join = async (ctx) => {
 };
 
 
+/**
+ * is join
+ * @param ctx
+ * @return {Promise.<boolean>}
+ */
+const isJoin = async (ctx) => {
+  const result = { success: false, message: '您已经加入了', isJoin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  const { id } = ctx.request.body;
+  const userId = ctx.session.user.id;
+  try {
+    // 查询是否已经加入过了
+    const select = 'select id from `join` where uid = ? and pid = ?';
+    const resSelect = await query(select, [userId, parseInt(id, 10)]);
+    if (resSelect.length > 0) {
+      result.message = '您已经加入了';
+      result.isJoin = true;
+    }
+    result.success = true;
+  } catch (exception) {
+    console.log('exception: ', exception);
+    result.message = exception.message || '查询失败，请重试';
+  }
+  ctx.body = result;
+  return true;
+};
+
+
+const sign = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { values } = ctx.request.body;
+    const data = {
+      uid: ctx.session.user.id,
+      pid: values.pid,
+      description: values.description,
+      picture: values.picture,
+    };
+    const sql = 'insert into `sign` set ?';
+    await query(sql, [data]);
+    result.message = '打卡成功';
+    result.success = true;
+  } catch (exception) {
+    result.message = exception.message || '打卡失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   insert,
   list,
   myList,
   detailById,
   join,
+  isJoin,
+  sign,
 };

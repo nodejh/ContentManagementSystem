@@ -45,10 +45,40 @@ const join = async (id) => {
 };
 
 
+const isJoin = async (id) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id }),
+    credentials: 'include',
+  };
+  return request('/api/v0.1/post/isJoin', options);
+};
+
+
+const sign = async (payload) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+    credentials: 'include',
+  };
+  return request('/api/v0.1/post/sign', options);
+};
+
+
 export {
   insert,
   list,
   detailById,
   myList,
   join,
+  isJoin,
+  sign,
 };
