@@ -243,7 +243,7 @@ class App extends Component {
         animate
         style={loading ? { height: '100%', width: '100%', position: 'fixed' } : { width: '100%' }}
       >
-        {isPostSuccess && <Redirect to="/mime" />}
+        {isPostSuccess && <Redirect to="/myPost" />}
         {
           toast.show && (
             <Toast
@@ -308,8 +308,8 @@ class App extends Component {
                   <TextareaAutosize
                     style={{ marginTop: 20 }}
                     useCacheForDOMMeasurements
-                    minRows={3}
-                    maxRows={6}
+                    minRows={5}
+                    maxRows={10}
                     onChange={event => this.onDOMChange(event, 'description')}
                   />
                 </FormField>

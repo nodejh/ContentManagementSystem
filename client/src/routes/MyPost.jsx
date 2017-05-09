@@ -72,86 +72,97 @@ class App extends Component {
   render() {
     const { toast, list: postList, isNotLogin } = this.state;
     return (
-      <Box
-        direction="row"
-        align="center"
-        alignContent="center"
-        justify="center"
-        wrap
-      >
-        { isNotLogin && <Redirect to="/login" /> }
-        {
-          toast.show && (
-            <Toast
-              status={toast.status}
-              onClose={this.hideToast}
-            >
-              {toast.message}
-            </Toast>
-          )
-        }
-        <Header>
-          <Heading>
-            我的发布
-          </Heading>
-        </Header>
-        {
-          // eslint-disable-next-line
-          postList.map((item) => {
-            return (
-              <Card
-                key={item.id}
-                thumbnail={item.picture && `/upload/album/${item.picture}`}
-                label={
-                  (
-                    <p>
-                      {moment(item.start_date).format('YYYY/M/D h:mm:ss')}
-                      <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                      {moment(item.end_date).format('YYYY/M/D h:mm:ss')}
-                    </p>
-                  )
-                }
-                heading={(
-                  <div>
-                    <p style={{ fontSize: '2em', fontWeight: 400, marginBottom: 0 }}>{item.title}</p>
-                    <div>
-                      {
-                        item.status === 0 ?
-                          (
-                            <p>
-                              <Status value="ok" />
-                              {constantsPostStatus[item.status]}
-                            </p>
-                          )
-                          :
-                          (
-                            <p>
-                              <Status value="warning" />
-                              {constantsPostStatus[item.status]}
-                            </p>
-                          )
-                      }
+      <div>
+        <Box
+          direction="row"
+          align="center"
+          alignContent="center"
+          justify="center"
+          wrap
+        >
+          <Header>
+            <Heading align="center">
+              我的发布
+            </Heading>
+          </Header>
+        </Box>
 
+        <Box
+          direction="row"
+          align="center"
+          alignContent="center"
+          justify="center"
+          wrap
+        >
+          { isNotLogin && <Redirect to="/login" /> }
+          {
+            toast.show && (
+              <Toast
+                status={toast.status}
+                onClose={this.hideToast}
+              >
+                {toast.message}
+              </Toast>
+            )
+          }
+          {
+            // eslint-disable-next-line
+            postList.map((item) => {
+              return (
+                <Card
+                  key={item.id}
+                  thumbnail={item.picture && `/upload/album/${item.picture}`}
+                  label={
+                    (
+                      <p>
+                        {moment(item.start_date).format('YYYY/M/D h:mm:ss')}
+                        <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
+                        {moment(item.end_date).format('YYYY/M/D h:mm:ss')}
+                      </p>
+                    )
+                  }
+                  heading={(
+                    <div>
+                      <p style={{ fontSize: '2em', fontWeight: 400, marginBottom: 0 }}>{item.title}</p>
+                      <div>
+                        {
+                          item.status === 0 ?
+                            (
+                              <p>
+                                <Status value="ok" />
+                                {constantsPostStatus[item.status]}
+                              </p>
+                            )
+                            :
+                            (
+                              <p>
+                                <Status value="warning" />
+                                {constantsPostStatus[item.status]}
+                              </p>
+                            )
+                        }
+
+                      </div>
                     </div>
-                  </div>
-                )}
-                description={
-                  <Markdown
-                    // eslint-disable-next-line
-                    content={item.description ?
-                      item.description.length > 100 ?
-                        `${item.description.substring(0, 100)}...` : item.description
-                      : ''}
-                  />
-                }
-                headingStrong={false}
-                link={<Link to={`/detail/${item.id}`}>查看详情</Link>}
-                style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-              />
-            );
-          })
-        }
-      </Box>
+                  )}
+                  description={
+                    <Markdown
+                      // eslint-disable-next-line
+                      content={item.description ?
+                        item.description.length > 100 ?
+                          `${item.description.substring(0, 100)}...` : item.description
+                        : ''}
+                    />
+                  }
+                  headingStrong={false}
+                  link={<Link to={`/detail/${item.id}`}>查看详情</Link>}
+                  style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
+                />
+              );
+            })
+          }
+        </Box>
+      </div>
     );
   }
 }
