@@ -111,9 +111,45 @@ const detailById = async (ctx) => {
 };
 
 
+const join = async (ctx) => {
+  const result = { success: false, message: '', isLogin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  const { id } = ctx.request.body;
+  const userId = ctx.session.user.id;
+  try {
+    // 查询是否已经加入过了
+    const select = 'select id from `join` where uid = ? and pid = ?';
+    const resSelect = await query(select, [userId, parseInt(id, 10)]);
+    if (resSelect.length > 0) {
+      result.message = '您已经加入了，无需再次加入';
+      ctx.body = result;
+      return false;
+    }
+
+    const sql = 'insert into `join` set ?';
+    await query(sql, [{ uid: userId, pid: parseInt(id, 10) }]);
+    result.success = true;
+    result.message = '加入成功';
+    ctx.body = result;
+    return true;
+  } catch (exception) {
+    console.log('exception: ', exception);
+    result.message = '加入失败，请重试';
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   insert,
   list,
   myList,
   detailById,
+  join,
 };

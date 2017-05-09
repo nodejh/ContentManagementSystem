@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
 import Markdown from 'grommet/components/Markdown';
+import PostJoin from './../components/Post/Join';
 import { detailById } from './../models/post';
 import { isLogin } from './../models/user';
 
@@ -74,6 +76,7 @@ class App extends Component {
 
   render() {
     const { toast, post, isNotLogin } = this.state;
+    const { id } = this.props.match.params;
     return (
       <Box
         direction="row"
@@ -114,10 +117,20 @@ class App extends Component {
           headingStrong
           style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
         />
+        <PostJoin id={id} />
       </Box>
     );
   }
 }
+
+
+App.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+};
 
 
 export default App;

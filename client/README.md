@@ -9,3 +9,4 @@
 - [ ] PADDING post 页面左右移动
 - [ ] 上传文件 session
 - [ ] 通过 isLogin 判断是否登录
+- [ ] join button icon color
