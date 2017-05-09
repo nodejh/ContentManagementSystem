@@ -29,6 +29,10 @@ class App extends Component {
 
   componentWillMount() {
     this.checkIsLogin();
+  }
+
+
+  componentDidMount() {
     this.getList();
   }
 
@@ -70,6 +74,8 @@ class App extends Component {
         justify="center"
         wrap
       >
+        { isNotLogin && <Redirect to="/login" /> }
+
         {
           // eslint-disable-next-line
           postList.map((item, index) => {
@@ -164,10 +170,6 @@ class App extends Component {
               {toast.message}
             </Toast>
           )
-        }
-
-        {
-          isNotLogin && <Redirect to="/login" />
         }
       </Box>
     );

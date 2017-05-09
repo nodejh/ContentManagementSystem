@@ -37,6 +37,7 @@ class App extends Component {
     };
     this.onDOMChange = this.onDOMChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.hideToast = this.hideToast.bind(this);
   }
 
 
@@ -73,7 +74,6 @@ class App extends Component {
     this.setState({ loading: true });
     try {
       const res = await login({ phone, password });
-      // console.log('res: ', res);
       if (res.success) {
         toast.status = 'ok';
         toast.message = '登录成功';
@@ -81,11 +81,12 @@ class App extends Component {
       } else {
         toast.status = 'critical';
         toast.message = res.message;
+        isLoginSuccess = false;
       }
     } catch (exception) {
-      // console.log('exception: ', exception);
       toast.status = 'critical';
       toast.message = exception.message || '登录失败，请重试';
+      isLoginSuccess = false;
     } finally {
       toast.show = true;
       this.setState({ toast, loading: false, isLoginSuccess });

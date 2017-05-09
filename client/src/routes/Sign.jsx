@@ -231,6 +231,7 @@ class App extends Component {
                 label="注册"
                 onClick={this.onSubmit}
                 primary
+                type="button"
                 secondary={false}
                 accent={false}
                 critical={false}

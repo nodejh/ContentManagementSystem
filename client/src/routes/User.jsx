@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import Box from 'grommet/components/Box';
 import Header from 'grommet/components/Header';
 import Heading from 'grommet/components/Heading';
 import Toast from 'grommet/components/Toast';
 import UserInfo from './../components/User/Info';
 import UserEdit from './../components/User/Edit';
-import { getInfo } from './../models/user';
+import { getInfo, isLogin } from './../models/user';
 
 class App extends Component {
   constructor(props) {
@@ -34,7 +35,9 @@ class App extends Component {
       },
       loading: false,
       editable: false,
+      isNotLogin: false,
     };
+    this.checkIsLogin = this.checkIsLogin.bind(this);
     this.showEdit = this.showEdit.bind(this);
     this.hideEdit = this.hideEdit.bind(this);
     this.hideToast = this.hideToast.bind(this);
@@ -43,7 +46,18 @@ class App extends Component {
 
 
   componentWillMount() {
+    this.checkIsLogin();
+  }
+
+  componentDidMount() {
     this.handleGetInfo();
+  }
+
+  async checkIsLogin() {
+    const res = await isLogin();
+    if (!res.isLogin) {
+      this.setState({ isNotLogin: true });
+    }
   }
 
   async handleGetInfo() {
@@ -86,9 +100,10 @@ class App extends Component {
   }
 
   render() {
-    const { editable, toast, info } = this.state;
+    const { editable, toast, info, isNotLogin } = this.state;
     return (
       <Box justify="center" align="center" wrap style={{ margin: 20 }}>
+        { isNotLogin && <Redirect to="/login" /> }
         <Header>
           <Heading>
             个人中心
