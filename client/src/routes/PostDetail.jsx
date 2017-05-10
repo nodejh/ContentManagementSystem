@@ -4,11 +4,13 @@ import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
+import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
+import UserIcon from 'grommet/components/icons/base/User';
 import Markdown from 'grommet/components/Markdown';
 import PostJoin from './../components/Post/Join';
 import PostSign from './../components/Post/Sign';
-import { detailById, isJoin } from './../models/post';
+import { detailById, isJoin, users } from './../models/post';
 import { isLogin } from './../models/user';
 
 class App extends Component {
@@ -16,6 +18,7 @@ class App extends Component {
     super(props);
     this.state = {
       isJoin: false,
+      users: [], // joined user's list of this post
       toast: {
         size: 'medium', // small|medium|large
         status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
@@ -30,11 +33,13 @@ class App extends Component {
     this.checkIsLogin = this.checkIsLogin.bind(this);
     this.checkIsJoin = this.checkIsJoin.bind(this);
     this.handleJoinSuccess = this.handleJoinSuccess.bind(this);
+    this.getUsers = this.getUsers.bind(this);
   }
 
 
   componentWillMount() {
     this.checkIsLogin();
+    this.getUsers();
   }
 
 
@@ -72,12 +77,35 @@ class App extends Component {
     return true;
   }
 
+  async getUsers() {
+    const { toast } = this.state;
+    const { id } = this.props.match.params;
+    try {
+      const res = await users(id);
+      if (res.success) {
+        this.setState({ users: res.users });
+      } else {
+        toast.status = 'critical';
+        toast.show = true;
+        toast.message = res.message || '获取加入该活动的用户失败，请刷新重试';
+        this.setState({ toast });
+      }
+    } catch (exception) {
+      console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '获取加入该活动的用户失败，请刷新重试';
+      this.setState({ toast });
+    }
+  }
+
   async checkIsLogin() {
     const res = await isLogin();
     if (!res.isLogin) {
       this.setState({ isNotLogin: true });
     }
   }
+
 
   async checkIsJoin() {
     const { toast } = this.state;
@@ -103,63 +131,97 @@ class App extends Component {
     }
   }
 
+
   /**
    * if join success, set isJoin true
+   * and get new joined users list
    */
   handleJoinSuccess() {
-    this.setState({ isJoin: true });
+    this.setState({ isJoin: true }, () => {
+      this.getUsers();
+    });
   }
 
 
   render() {
-    const { toast, post, isNotLogin, isJoin: stateIsJoin } = this.state;
+    const { toast, post, isNotLogin, isJoin: stateIsJoin, users: stateUsers } = this.state;
     const { id } = this.props.match.params;
     return (
-      <Box
-        direction="row"
-        align="center"
-        alignContent="center"
-        justify="center"
-        wrap
-      >
-        { isNotLogin && <Redirect to="/login" /> }
-        {
-          toast.show && (
-            <Toast
-              status={toast.status}
-              onClose={this.hideToast}
-            >
-              {toast.message}
-            </Toast>
-          )
-        }
-
-        <Card
-          thumbnail={post.picture && `/upload/album/${post.picture}`}
-          label={
-            (
-              <p>
-                {moment(post.start_date).format('YYYY/M/D h:mm:ss')}
-                <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                {moment(post.end_date).format('YYYY/M/D h:mm:ss')}
-              </p>
+      <div>
+        <Box
+          direction="row"
+          align="center"
+          alignContent="center"
+          justify="center"
+          wrap
+        >
+          { isNotLogin && <Redirect to="/login" /> }
+          {
+            toast.show && (
+              <Toast
+                status={toast.status}
+                onClose={this.hideToast}
+              >
+                {toast.message}
+              </Toast>
             )
           }
-          heading={post.title}
-          description={
-            <Markdown
-              content={post.description}
-            />
+
+          <Card
+            thumbnail={post.picture && `/upload/album/${post.picture}`}
+            label={
+              (
+                <p>
+                  {moment(post.start_date).format('YYYY/M/D h:mm:ss')}
+                  <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
+                  {moment(post.end_date).format('YYYY/M/D h:mm:ss')}
+                </p>
+              )
+            }
+            heading={post.title}
+            description={
+              <Markdown
+                content={post.description}
+              />
+            }
+            headingStrong
+            style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
+          />
+        </Box>
+        <Box
+          direction="row"
+          align="center"
+          alignContent="center"
+          justify="center"
+          wrap
+        >
+          <div style={{ marginTop: 10, marginBottom: 20, textAlign: 'left' }}>
+            <div style={{ display: 'inline', margin: '3px 7px' }}>
+              <UserIcon size="xsmall" /><span>{stateUsers.length}人</span>
+            </div>
+            {stateUsers.map((item, index) => {
+              console.log('item: ', item);
+              return (
+                // eslint-disable-next-line
+                <div style={{ display: 'inline' }} key={index}>
+                  <Anchor
+                    label={item.name ? item.name : '无名'}
+                    href="#"
+                    style={{ margin: 3 }}
+                  />
+                  {index === stateUsers.length - 1 ? '' : '、'}
+                </div>
+              );
+            })}
+          </div>
+
+          { stateIsJoin ?
+            <PostSign id={id} />
+            :
+            <PostJoin id={id} handleJoinSuccess={this.handleJoinSuccess} />
           }
-          headingStrong
-          style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
-        />
-        { stateIsJoin ?
-          <PostSign id={id} />
-          :
-          <PostJoin id={id} handleJoinSuccess={this.handleJoinSuccess} />
-        }
-      </Box>
+        </Box>
+      </div>
     );
   }
 }

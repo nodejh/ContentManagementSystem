@@ -1,5 +1,7 @@
 cd client/
-npm run build
-cp -rfv build/static ../server/static/
-cp build/index.html ../server/view/index.ejs
+#npm run build
+cd ../
+cp client/build/index.html server/views/index.ejs
+cp -rfv client/build/ server/static/
+#mv server/view/index.html
 

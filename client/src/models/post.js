@@ -19,9 +19,15 @@ const list = async () => request('/api/v0.1/post/list');
 
 
 /**
- * my post
+ * my post list
  */
 const myList = async () => request('/api/v0.1/post/myList');
+
+
+/**
+ * my join list
+ */
+const myJoin = async () => request('/api/v0.1/post/myJoin');
 
 
 const detailById = async id => request(`/api/v0.1/post/detail/${id}`);
@@ -73,6 +79,9 @@ const sign = async (payload) => {
 };
 
 
+const users = async id => request(`/api/v0.1/post/users/${id}`);
+
+
 export {
   insert,
   list,
@@ -81,4 +90,6 @@ export {
   join,
   isJoin,
   sign,
+  users,
+  myJoin,
 };

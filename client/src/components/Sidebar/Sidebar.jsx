@@ -119,7 +119,7 @@ class App extends Component {
             <Anchor href="/myPost" className={pathname === '/myPost' && 'active'}>
               我的发布
             </Anchor>
-            <Anchor href="/join" className={pathname === '/join' && 'active'}>
+            <Anchor href="/myJoin" className={pathname === '/join' && 'active'}>
               我的参与
             </Anchor>
             <Anchor href="/user" className={pathname === '/user' && 'active'}>

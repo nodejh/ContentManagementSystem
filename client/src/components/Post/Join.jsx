@@ -84,7 +84,7 @@ class App extends Component {
           )
         }
         <Button
-          icon={loading ? <IconSpinning colorIndex="light-1" /> : <IconLink />}
+          icon={loading ? <IconSpinning /> : <IconLink />}
           label="加入"
           onClick={() => this.handleJoin()}
           primary

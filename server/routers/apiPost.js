@@ -10,6 +10,8 @@ router.get('/detail/:id', apiPost.detailById);
 router.post('/join', apiPost.join);
 router.post('/isJoin', apiPost.isJoin);
 router.post('/sign', apiPost.sign);
+router.get('/users/:id', apiPost.users);
+router.get('/myJoin', apiPost.myJoin);
 
 
 module.exports = router;

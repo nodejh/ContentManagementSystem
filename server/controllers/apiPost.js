@@ -81,6 +81,31 @@ const myList = async (ctx) => {
 };
 
 
+const myJoin = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const userId = ctx.session.user.id;
+    const sql = 'select * from `join` left join `posts` on `join`.pid = `posts`.id where `join`.uid = ? order by `join`.id desc';
+    const postList = await query(sql, [userId]);
+    result.message = '获取任务列表成功';
+    result.success = true;
+    result.list = postList;
+  } catch (exception) {
+    console.log('exception: ', exception);
+    result.message = exception.message || '获取任务列表失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 const detailById = async (ctx) => {
   const result = { success: false, message: '', isLogin: false };
   if (!(ctx.session.user && ctx.session.user.id)) {
@@ -152,7 +177,7 @@ const join = async (ctx) => {
  * @return {Promise.<boolean>}
  */
 const isJoin = async (ctx) => {
-  const result = { success: false, message: '您已经加入了', isJoin: false };
+  const result = { success: false, message: '您尚未加入', isJoin: false };
   if (!(ctx.session.user && ctx.session.user.id)) {
     result.message = '请登录后再操作';
     ctx.body = result;
@@ -208,6 +233,30 @@ const sign = async (ctx) => {
 };
 
 
+const users = async (ctx) => {
+  const result = { success: false, message: '获取加入该活动的用户失败', isLogin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  try {
+    const { id = null } = ctx.params;
+    const sql = 'select * from `join` left join `users` on `join`.uid = `users`.`id` where `join`.pid = ?';
+    const res = await query(sql, [id]);
+    result.message = '获取加入该活动的用户成功';
+    result.success = true;
+    result.users = res;
+  } catch (exception) {
+    result.message = exception.message || '获取加入该活动的用户失败';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   insert,
   list,
@@ -216,4 +265,6 @@ module.exports = {
   join,
   isJoin,
   sign,
+  users,
+  myJoin,
 };
