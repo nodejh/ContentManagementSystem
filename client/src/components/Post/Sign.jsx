@@ -5,7 +5,6 @@ import Button from 'grommet/components/Button';
 import Toast from 'grommet/components/Toast';
 import FileUpload from 'react-fileupload';
 import TextareaAutosize from 'react-textarea-autosize';
-import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
 import Footer from 'grommet/components/Footer';
 import FormField from 'grommet/components/FormField';
@@ -13,7 +12,7 @@ import Anchor from 'grommet/components/Anchor';
 import LikeIcon from 'grommet/components/icons/base/Like';
 import UploadIcon from 'grommet/components/icons/base/Upload';
 import { sign } from './../../models/post';
-import { checkSize, checkIsImage } from './../../utils/file';
+import { checkIsImage, checkSize } from './../../utils/file';
 
 
 class App extends Component {
@@ -202,70 +201,70 @@ class App extends Component {
 
     return (
       <div>
-        <Box justify="center" align="center" wrap style={{ margin: 20 }}>
-          {
-            toast.show && (
-              <Toast
-                status={toast.status}
-                onClose={this.hideToast}
-              >
-                {toast.message}
-              </Toast>
-            )
-          }
+        {
+          toast.show && (
+            <Toast
+              status={toast.status}
+              onClose={this.hideToast}
+            >
+              {toast.message}
+            </Toast>
+          )
+        }
 
-          {
-            !isShowSign && (
-              <Button
-                icon={<LikeIcon />}
-                label="打卡"
-                onClick={() => this.handleShowSign()}
-                primary
-                secondary={false}
-                plain={false}
-              />
-            )
-          }
+        {
+          !isShowSign && (
+            <Button
+              icon={<LikeIcon />}
+              label="打卡"
+              onClick={() => this.handleShowSign()}
+              primary
+              secondary={false}
+              plain={false}
+            />
+          )
+        }
 
-          {
-            isShowSign && (
-              <Form>
-                <FormField label="上传图偏">
-                  <FileUpload options={this.uploadOptions} ref="fileUpload" style={{ padding: 20 }}>
-                    <div ref="chooseAndUpload">
-                      <Button icon={<UploadIcon />} label="点击上传" />
+        {
+          isShowSign && (
+            <Form style={{ width: '100%' }}>
+              <FormField label="上传图片">
+                <FileUpload options={this.uploadOptions} ref="fileUpload" style={{ padding: 20 }}>
+                  <div ref="chooseAndUpload">
+                    <Button icon={<UploadIcon />} label="点击上传" />
+                    <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '80%', position: 'absolute' }}>
                       { form.picture && form.pictureName }
-                    </div>
-                  </FileUpload>
-                </FormField>
-                <FormField
-                  label="描述"
-                  help={
-                    <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
-                    </p>
-                  }
-                  error={error.description}
-                >
-                  <TextareaAutosize
-                    style={{ marginTop: 20 }}
-                    useCacheForDOMMeasurements
-                    minRows={5}
-                    maxRows={10}
-                    onChange={event => this.onDOMChange(event, 'description')}
-                  />
-                </FormField>
-                <Footer pad={{ vertical: 'medium' }}>
-                  <Button
-                    label="提交"
-                    type="button"
-                    primary
-                    onClick={this.onSubmit}
-                  />
-                </Footer>
-              </Form>
-            )
-          }
-        </Box>
+                      </div>
+                  </div>
+                </FileUpload>
+              </FormField>
+              <FormField
+                label="描述"
+                help={
+                  <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
+                  </p>
+                }
+                error={error.description}
+              >
+                <TextareaAutosize
+                  style={{ marginTop: 20 }}
+                  useCacheForDOMMeasurements
+                  minRows={5}
+                  maxRows={10}
+                  onChange={event => this.onDOMChange(event, 'description')}
+                />
+              </FormField>
+              <Footer pad={{ vertical: 'medium' }}>
+                <Button
+                  label="提交"
+                  type="button"
+                  primary
+                  onClick={this.onSubmit}
+                />
+              </Footer>
+            </Form>
+          )
+        }
       </div>
     );
   }

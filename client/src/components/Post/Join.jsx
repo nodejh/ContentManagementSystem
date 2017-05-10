@@ -31,7 +31,7 @@ class App extends Component {
    * @return {Promise.<boolean>}
    */
   async handleJoin() {
-    const { id } = this.props;
+    const { id, handleJoinSuccess } = this.props;
     const { loading, toast } = this.state;
     if (loading) {
       return false;
@@ -44,7 +44,9 @@ class App extends Component {
         toast.show = true;
         toast.status = 'ok';
         toast.message = res.message;
-        this.setState({ toast, loading: false });
+        this.setState({ toast, loading: false }, () => {
+          handleJoinSuccess();
+        });
       } else {
         toast.show = true;
         toast.status = 'critical';
@@ -96,6 +98,7 @@ class App extends Component {
 
 App.propTypes = {
   id: PropTypes.string.isRequired,
+  handleJoinSuccess: PropTypes.func.isRequired,
 };
 
 

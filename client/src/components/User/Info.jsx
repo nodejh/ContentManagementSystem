@@ -25,11 +25,11 @@ class App extends Component {
       <div>
         <Card
           thumbnail={info.avatar}
-          label={`[${info.gender}] ${info.phone}`}
+          label={`[${info.gender ? info.gender : '暂无'}] ${info.phone}`}
           heading={info.name}
           description={
             <div>
-              <p>{`学校:${info.school}  专业:${info.major}`}</p>
+              <p>{`学校:${info.school ? info.school : '暂无'}  专业:${info.major ? info.major : '暂无'}`}</p>
               <p>{info.introduce}</p>
               <p>{`注册时间:${moment(info.datetime).format('MMMM Do YYYY, h:mm:ss a')}`}</p>
             </div>

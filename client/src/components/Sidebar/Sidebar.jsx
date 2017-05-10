@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
+import Toast from 'grommet/components/Toast';
 import Sidebar from 'grommet/components/Sidebar';
 import Header from 'grommet/components/Header';
 import Title from 'grommet/components/Title';
@@ -10,12 +12,66 @@ import Footer from 'grommet/components/Footer';
 import LogoutIcon from 'grommet/components/icons/base/Logout';
 import LinkPreviousIcon from 'grommet/components/icons/base/LinkPrevious';
 import { title } from './../../utils/constants';
+import { logout, isLogin } from './../../models/user';
 
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isLogin: false,
+      redirectToLogin: false,
+      toast: {
+        size: 'medium', // small|medium|large
+        status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
+        message: null,
+        show: false, // 是否显示 toast
+      },
+    };
+    this.handleLogout = this.handleLogout.bind(this);
+    this.hideToast = this.hideToast.bind(this);
+    this.checkIsLogin = this.checkIsLogin.bind(this);
+  }
+
+  componentWillMount() {
+    this.checkIsLogin();
+  }
+
+  async handleLogout() {
+    const { toast } = this.state;
+    try {
+      const res = await logout();
+      if (res.success) {
+        console.log('res: ', res);
+        this.setState({ redirectToLogin: true });
+      } else {
+        toast.show = true;
+        toast.status = 'critical';
+        toast.message = res.message || '退出登录失败，请重试';
+        this.setState({ toast });
+      }
+    } catch (exception) {
+      console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '退出登录失败，请重试';
+      this.setState({ toast });
+    }
+  }
+
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
+  }
+
+
+  async checkIsLogin() {
+    const res = await isLogin();
+    if (res.isLogin) {
+      this.setState({ isLogin: true });
+    }
   }
 
   render() {
@@ -23,12 +79,23 @@ class App extends Component {
     console.log(' this.context: ', this.context);
     // eslint-disable-next-line
     const pathname = window.location.pathname;
+    const { isLogin: stateIsLogin, redirectToLogin, toast } = this.state;
     return (
       <Sidebar
         colorIndex="neutral-1" size="small"
         fixed
         full
       >
+        {
+          toast.show && (
+            <Toast
+              status={toast.status}
+              onClose={this.hideToast}
+            >
+              {toast.message}
+            </Toast>
+          )
+        }
         <Header
           pad="medium"
           justify="between"
@@ -61,10 +128,25 @@ class App extends Component {
           </Menu>
         </Box>
         <Footer pad="medium">
-          <Anchor href="/login">
-            登录
-            <LogoutIcon colorIndex="light-1" style={{ cursor: 'pointer' }} />
-          </Anchor>
+          {
+            stateIsLogin ?
+              (
+                <LogoutIcon
+                  colorIndex="light-1"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => this.handleLogout()}
+                />
+              )
+              :
+              (
+                <Anchor href="/login">
+                  登录
+                </Anchor>
+              )
+          }
+          {
+            redirectToLogin && <Redirect to="/login" />
+          }
         </Footer>
       </Sidebar>
     );

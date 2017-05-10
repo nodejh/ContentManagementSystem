@@ -29,6 +29,7 @@ class App extends Component {
     this.getPostDetailById = this.getPostDetailById.bind(this);
     this.checkIsLogin = this.checkIsLogin.bind(this);
     this.checkIsJoin = this.checkIsJoin.bind(this);
+    this.handleJoinSuccess = this.handleJoinSuccess.bind(this);
   }
 
 
@@ -102,6 +103,14 @@ class App extends Component {
     }
   }
 
+  /**
+   * if join success, set isJoin true
+   */
+  handleJoinSuccess() {
+    this.setState({ isJoin: true });
+  }
+
+
   render() {
     const { toast, post, isNotLogin, isJoin: stateIsJoin } = this.state;
     const { id } = this.props.match.params;
@@ -145,7 +154,11 @@ class App extends Component {
           headingStrong
           style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
         />
-        { stateIsJoin ? <PostSign id={id} /> : <PostJoin id={id} />}
+        { stateIsJoin ?
+          <PostSign id={id} />
+          :
+          <PostJoin id={id} handleJoinSuccess={this.handleJoinSuccess} />
+        }
       </Box>
     );
   }

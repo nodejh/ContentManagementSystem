@@ -1,3 +1,4 @@
+const zlib = require('zlib');
 const path = require('path');
 const Koa = require('koa');
 const views = require('koa-views');
@@ -5,6 +6,7 @@ const koaStatic = require('koa-static');
 const bodyParser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const session = require('koa-session');
+const compress = require('koa-compress')
 
 const config = require('./config/config');
 const routers = require('./routers/routers');
@@ -23,6 +25,16 @@ const app = new Koa();
 // session
 app.keys = ['secret'];
 app.use(session(sessionConfig, app));
+
+app.use(compress({
+  filter: (contentType) => {
+    console.log('content: ', contentType);
+    // return /text/i.test(content_type);
+    return true;
+  },
+  threshold: 1,
+  flush: zlib.Z_SYNC_FLUSH,
+}));
 
 // 配置控制台日志中间件
 app.use(logger());
