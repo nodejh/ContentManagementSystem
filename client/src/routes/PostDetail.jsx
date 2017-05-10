@@ -99,6 +99,7 @@ class App extends Component {
     }
   }
 
+
   async checkIsLogin() {
     const res = await isLogin();
     if (!res.isLogin) {
@@ -131,10 +132,9 @@ class App extends Component {
     }
   }
 
-
   /**
    * if join success, set isJoin true
-   * and get new joined users list
+   * then get new joined users list
    */
   handleJoinSuccess() {
     this.setState({ isJoin: true }, () => {
@@ -144,12 +144,18 @@ class App extends Component {
 
 
   render() {
-    const { toast, post, isNotLogin, isJoin: stateIsJoin, users: stateUsers } = this.state;
+    const {
+      toast,
+      post,
+      isNotLogin,
+      isJoin: stateIsJoin,
+      users: stateUsers,
+    } = this.state;
     const { id } = this.props.match.params;
     return (
       <div>
         <Box
-          direction="row"
+          direction="column"
           align="center"
           alignContent="center"
           justify="center"
@@ -187,14 +193,6 @@ class App extends Component {
             headingStrong
             style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
           />
-        </Box>
-        <Box
-          direction="row"
-          align="center"
-          alignContent="center"
-          justify="center"
-          wrap
-        >
           <div style={{ marginTop: 10, marginBottom: 20, textAlign: 'left' }}>
             <div style={{ display: 'inline', margin: '3px 7px' }}>
               <UserIcon size="xsmall" /><span>{stateUsers.length}人</span>
@@ -214,12 +212,14 @@ class App extends Component {
               );
             })}
           </div>
+          <div style={{ display: 'block' }}>
+            { stateIsJoin ?
+              <PostSign id={id} />
+              :
+              <PostJoin id={id} handleJoinSuccess={this.handleJoinSuccess} />
+            }
+          </div>
 
-          { stateIsJoin ?
-            <PostSign id={id} />
-            :
-            <PostJoin id={id} handleJoinSuccess={this.handleJoinSuccess} />
-          }
         </Box>
       </div>
     );

@@ -1,6 +1,9 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
+import Card from 'grommet/components/Card';
+import Markdown from 'grommet/components/Markdown';
 import Button from 'grommet/components/Button';
 import Toast from 'grommet/components/Toast';
 import FileUpload from 'react-fileupload';
@@ -11,7 +14,7 @@ import FormField from 'grommet/components/FormField';
 import Anchor from 'grommet/components/Anchor';
 import LikeIcon from 'grommet/components/icons/base/Like';
 import UploadIcon from 'grommet/components/icons/base/Upload';
-import { sign } from './../../models/post';
+import { sign, signList } from './../../models/post';
 import { checkIsImage, checkSize } from './../../utils/file';
 
 
@@ -21,6 +24,7 @@ class App extends Component {
     this.state = {
       loading: false,
       isShowSign: false,
+      signList: [],
       toast: {
         size: 'medium', // small|medium|large
         status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
@@ -43,6 +47,7 @@ class App extends Component {
     this.checkUploadImg = this.checkUploadImg.bind(this);
     this.handleUploadSuccess = this.handleUploadSuccess.bind(this);
     this.handleUploadFailed = this.handleUploadFailed.bind(this);
+    this.getSignList = this.getSignList.bind(this);
     this.uploadOptions = {
       baseUrl: '/api/v0.1/upload',
       multiple: true,
@@ -53,7 +58,6 @@ class App extends Component {
       credentials: 'include',
       wrapperDisplay: 'inline-block',
       beforeUpload: this.checkUploadImg,
-      uploading: this.handleUploading,
       uploadSuccess: this.handleUploadSuccess,
       uploadFail: this.handleUploadFailed,
       uploadError: this.handleUploadFailed,
@@ -61,6 +65,7 @@ class App extends Component {
   }
 
   componentWillMount() {
+    this.getSignList();
   }
 
   /**
@@ -84,6 +89,26 @@ class App extends Component {
     const { form } = this.state;
     form[key] = new Date(value);
     this.setState({ form });
+  }
+
+  async getSignList() {
+    const { toast } = this.state;
+    try {
+      const { id } = this.props;
+      const res = await signList(id);
+      if (res.success) {
+        this.setState({ signList: res.signList });
+      } else {
+        toast.show = true;
+        toast.status = 'critical';
+        toast.message = res.message || '查询失败，请重新进入该页面';
+      }
+    } catch (exception) {
+      console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '查询失败，请重新进入该页面';
+    }
   }
 
 
@@ -116,7 +141,9 @@ class App extends Component {
         toast.show = true;
         toast.message = '打卡成功';
         toast.status = 'ok';
-        this.setState({ toast, loading: false, isShowSign: false });
+        this.setState({ toast, loading: false, isShowSign: false }, () => {
+          this.getSignList();
+        });
       } else {
         toast.show = true;
         toast.status = 'critical';
@@ -197,7 +224,7 @@ class App extends Component {
   }
 
   render() {
-    const { toast, isShowSign, form, error } = this.state;
+    const { toast, isShowSign, form, error, signList: stateSignList } = this.state;
 
     return (
       <div>
@@ -265,6 +292,28 @@ class App extends Component {
             </Form>
           )
         }
+
+        <div style={{ marginTop: 20 }}>
+          <p>打卡列表</p>
+          {
+            // eslint-disable-next-line
+            stateSignList.map((item, index) => {
+              return (
+                // eslint-disable-next-line
+                <div key={index} style={{ width: '100%', margin: 10 }}>
+                  <Card
+                    thumbnail={item.picture && `/upload/album/${item.picture}`}
+                    label={`${item.name ? item.name : '匿名'} ${moment(item.date).format('YYYY/M/D h:mm:ss')}`}
+                    description={
+                      <Markdown content={item.description} />
+                    }
+                    style={{ border: '1px solid #eee' }}
+                  />
+                </div>
+              );
+            })
+          }
+        </div>
       </div>
     );
   }

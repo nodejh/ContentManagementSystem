@@ -78,6 +78,8 @@ const sign = async (payload) => {
   return request('/api/v0.1/post/sign', options);
 };
 
+const signList = async id => request(`/api/v0.1/post/signList/${id}`);
+
 
 const users = async id => request(`/api/v0.1/post/users/${id}`);
 
@@ -92,4 +94,5 @@ export {
   sign,
   users,
   myJoin,
+  signList,
 };

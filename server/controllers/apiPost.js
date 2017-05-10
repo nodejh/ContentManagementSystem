@@ -257,6 +257,40 @@ const users = async (ctx) => {
 };
 
 
+const signList = async (ctx) => {
+  const result = { success: false, message: '获取打卡列表失败', isLogin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  try {
+    const { id = null } = ctx.params;
+    const sql = 'select ' +
+      '`sign`.id, ' +
+      '`sign`.uid, ' +
+      '`sign`.pid, ' +
+      '`sign`.picture, ' +
+      '`sign`.`datetime`, ' +
+      '`sign`.`description`, ' +
+      '`users`.`name` ' +
+      'from `sign` ' +
+      'left join `users` on `sign`.uid = `users`.`id` ' +
+      'where `sign`.pid = ? order by `sign`.id desc';
+    const res = await query(sql, [id]);
+    result.message = '获取打卡列表成功';
+    result.success = true;
+    result.signList = res;
+  } catch (exception) {
+    result.message = exception.message || '获取打卡列表成功';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   insert,
   list,
@@ -267,4 +301,5 @@ module.exports = {
   sign,
   users,
   myJoin,
+  signList,
 };

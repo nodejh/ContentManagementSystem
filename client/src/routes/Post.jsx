@@ -67,7 +67,6 @@ class App extends Component {
       credentials: 'include',
       wrapperDisplay: 'inline-block',
       beforeUpload: this.checkUploadImg,
-      uploading: this.handleUploading,
       uploadSuccess: this.handleUploadSuccess,
       uploadFail: this.handleUploadFailed,
       uploadError: this.handleUploadFailed,

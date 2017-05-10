@@ -1,5 +1,5 @@
 cd client/
-#npm run build
+npm run build
 cd ../
 cp client/build/index.html server/views/index.ejs
 cp -rfv client/build/ server/static/
