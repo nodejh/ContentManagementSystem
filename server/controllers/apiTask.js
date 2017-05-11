@@ -1,3 +1,4 @@
+const moment = require('moment');
 const query = require('./../utils/mysql').query;
 
 
@@ -91,8 +92,67 @@ const signList = async (ctx) => {
 };
 
 
+const sign = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { values } = ctx.request.body;
+    console.log('values: ', values);
+    const data = {
+      uid: ctx.session.user.id,
+      tid: values.tid,
+      description: values.description,
+      picture: values.picture,
+    };
+    const sql = 'insert into `sign` set ?';
+    await query(sql, [data]);
+    result.message = '打卡成功';
+    result.success = true;
+  } catch (exception) {
+    result.message = exception.message || '打卡失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
+const today = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { id = null } = ctx.params;
+    const yesterday = new Date(moment().subtract(1, 'days').format());
+    const tomorrow = new Date(moment().add(1, 'days').format());
+    const sql = 'select * from tasks where pid = ? and datetime between ? and ?';
+    const res = await query(sql, [id, yesterday, tomorrow]);
+    console.log('res: ', res);
+    result.message = '获取今日任务成功';
+    result.task = res[0];
+    result.success = true;
+  } catch (exception) {
+    result.message = exception.message || '获取今日任务失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   list,
   add,
   signList,
+  sign,
+  today,
 };

@@ -33,8 +33,31 @@ const add = async (payload) => {
 const signList = async id => request(`/api/v0.1/task/signList/${id}`);
 
 
+/**
+ * sign for a task
+ * @param payload
+ * @return {Promise.<Object>}
+ */
+const sign = async (payload) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+    credentials: 'include',
+  };
+  return request('/api/v0.1/task/sign', options);
+};
+
+
+const todayTask = async id => request(`/api/v0.1/task/today/${id}`);
+
 export {
   list,
   add,
   signList,
+  sign,
+  todayTask,
 };
