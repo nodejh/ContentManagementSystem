@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Loadable from 'react-loading-overlay';
+import Markdown from 'grommet/components/Markdown';
 import TextareaAutosize from 'react-textarea-autosize';
 import Form from 'grommet/components/Form';
 import FormFields from 'grommet/components/FormFields';
@@ -10,7 +12,7 @@ import Button from 'grommet/components/Button';
 import Toast from 'grommet/components/Toast';
 import Card from 'grommet/components/Card';
 import AddIcon from 'grommet/components/icons/base/Add';
-import { list as taskList, sign as taskSign } from './../../models/task';
+import { list as taskList, add as taskAdd, signList } from './../../models/task';
 
 class App extends Component {
 
@@ -19,6 +21,8 @@ class App extends Component {
     this.state = {
       loading: false,
       isShowTaskHistory: false,
+      isShowTodaySignList: false,
+      todaySignList: [],
       list: [],
       form: { content: null },
       error: { content: null },
@@ -60,8 +64,8 @@ class App extends Component {
    * @return {Promise.<void>}
    */
   async getTaskList() {
-    const { toast } = this.state;
     const { id } = this.props;
+    const { toast } = this.state;
     try {
       // console.log('taskList: ', taskList);
       const res = await taskList(id);
@@ -106,8 +110,9 @@ class App extends Component {
       return false;
     }
     const data = { ...form, pid: id };
+    this.setState({ loading: true });
     try {
-      const res = await taskSign({ values: data });
+      const res = await taskAdd({ values: data });
       if (res.success) {
         toast.show = true;
         toast.message = '发布成功';
@@ -137,8 +142,27 @@ class App extends Component {
    * get sign list of task
    * @param {number|string} id task id
    */
-  handleGetSignList(id) {
+  async handleGetSignList(id) {
     console.log('id: ', id);
+    const { toast } = this.state;
+    this.setState({ loading: true });
+    try {
+      const res = await signList(id);
+      if (res.success) {
+        this.setState({ todaySignList: res.signList, loading: false, isShowTodaySignList: true });
+      } else {
+        toast.show = true;
+        toast.message = '获取打卡列表失败，请重试';
+        toast.status = 'critical';
+        this.setState({ toast, loading: false });
+      }
+    } catch (exception) {
+      console.log('exception: ', exception);
+      toast.show = true;
+      toast.message = '获取打卡列表失败，请重试';
+      toast.status = 'critical';
+      this.setState({ toast, loading: false });
+    }
     this.setState({ });
   }
 
@@ -150,7 +174,11 @@ class App extends Component {
   }
 
   render() {
-    const { loading, toast, list, isShowTaskHistory, form, error } = this.state;
+    const { loading, toast, list,
+      isShowTaskHistory, isShowTodaySignList, todaySignList,
+      form, error }
+      = this.state;
+    console.log('todaySignList: ', todaySignList);
     let taskToday = null;
     const taskHistory = list.filter((item) => {
       if (new Date(item.datetime).toLocaleDateString() === new Date().toLocaleDateString()) {
@@ -204,6 +232,21 @@ class App extends Component {
                 plain
                 style={{ fontSize: '.8em' }}
               />
+              { isShowTodaySignList && todaySignList.length === 0 ?
+                <p style={{ width: '100%', margin: 10 }}>暂无打卡记录</p>
+                :
+                todaySignList.map(itemSign => (
+                  <div key={itemSign.id} style={{ width: '100%', margin: 10 }}>
+                    <Card
+                      thumbnail={itemSign.picture && `/upload/album/${itemSign.picture}`}
+                      label={`${itemSign.name ? itemSign.name : '匿名'} ${moment(itemSign.date).format('YYYY/M/D h:mm:ss')}`}
+                      description={
+                        <Markdown content={itemSign.description} />
+                      }
+                      style={{ border: '1px solid #eee' }}
+                    />
+                  </div>
+              ))}
             </div>
           )
         }
@@ -255,7 +298,6 @@ class App extends Component {
               />
               <Button
                 label="打卡列表"
-                onClick={() => this.handleGetSignList(item.id)}
                 primary={false}
                 secondary={false}
                 accent={false}
@@ -263,6 +305,7 @@ class App extends Component {
                 plain
                 style={{ fontSize: '.8em' }}
               />
+              <Link to={`/signList/${item.id}`} />
             </div>
             ),
           )
@@ -277,7 +320,7 @@ class App extends Component {
               accent={false}
               critical
               plain
-              style={{ fontSize: '.8em', float: 'right', color: 'rgb(142, 142, 142)' }}
+              style={{ fontSize: '.8em', width: '100%', textAlign: 'right', color: 'rgb(142, 142, 142)' }}
             />
             :
             <Button
@@ -288,7 +331,7 @@ class App extends Component {
               accent={false}
               critical
               plain
-              style={{ fontSize: '.8em', float: 'right', color: 'rgb(142, 142, 142)' }}
+              style={{ fontSize: '.8em', width: '100%', textAlign: 'right', color: 'rgb(142, 142, 142)' }}
             />
         }
       </Loadable>
@@ -298,6 +341,7 @@ class App extends Component {
 
 
 App.propTypes = {
+  // eslint-disable-next-line
   id: PropTypes.string.isRequired,
 };
 

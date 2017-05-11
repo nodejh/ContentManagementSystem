@@ -14,6 +14,7 @@ import Post from './routes/Post';
 import MyPost from './routes/MyPost';
 import MyJoin from './routes/MyJoin';
 import MyPostDetail from './routes/MyPostDetail';
+import TaskDetail from './routes/TaskDetail';
 import PostDetail from './routes/PostDetail';
 import User from './routes/User';
 
@@ -118,6 +119,7 @@ class App extends Component {
                   <Route path="/myPost" component={MyPost} />
                   <Route path="/myJoin" component={MyJoin} />
                   <Route path="/myPostDetail/:id" component={MyPostDetail} />
+                  <Route path="/taskDetail/:id" component={TaskDetail} />
                   <Route path="/detail/:id" component={PostDetail} />
                   <Route path="/user" component={User} />
                 </div>

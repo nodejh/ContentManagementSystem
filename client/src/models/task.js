@@ -8,11 +8,11 @@ const list = async id => request(`/api/v0.1/task/list/${id}`);
 
 
 /**
- * sign for task
+ * add task
  * @param payload
  * @return {Promise.<Object>}
  */
-const sign = async (payload) => {
+const add = async (payload) => {
   const options = {
     method: 'POST',
     headers: {
@@ -22,15 +22,19 @@ const sign = async (payload) => {
     body: JSON.stringify(payload),
     credentials: 'include',
   };
-  return request('/api/v0.1/task/sign', options);
+  return request('/api/v0.1/task/add', options);
 };
 
 
+/**
+ * all sign list of a task
+ * @param id
+ */
 const signList = async id => request(`/api/v0.1/task/signList/${id}`);
 
 
 export {
   list,
-  sign,
+  add,
   signList,
 };

@@ -26,11 +26,11 @@ const list = async (ctx) => {
 
 
 /**
- * sign for a task
+ * add a task
  * @param ctx
  * @return {Promise.<boolean>}
  */
-const sign = async (ctx) => {
+const add = async (ctx) => {
   const result = { success: false, message: '', auth: false };
   if (!(ctx.session.user && ctx.session.user.id)) {
     result.message = '请登录后再操作';
@@ -46,10 +46,10 @@ const sign = async (ctx) => {
     };
     const sql = 'insert into `tasks` set ?';
     await query(sql, [data]);
-    result.message = '打卡成功';
+    result.message = '添加任务成功';
     result.success = true;
   } catch (exception) {
-    result.message = exception.message || '打卡失败，请重试';
+    result.message = exception.message || '添加任务失败，请重试';
   } finally {
     ctx.body = result;
   }
@@ -77,7 +77,7 @@ const signList = async (ctx) => {
       '`users`.`name` ' +
       'from `sign` ' +
       'left join `users` on `sign`.uid = `users`.`id` ' +
-      'where `sign`.pid = ? order by `sign`.id desc';
+      'where `sign`.tid = ? order by `sign`.id desc';
     const res = await query(sql, [id]);
     result.message = '获取打卡列表成功';
     result.success = true;
@@ -93,6 +93,6 @@ const signList = async (ctx) => {
 
 module.exports = {
   list,
-  sign,
+  add,
   signList,
 };
