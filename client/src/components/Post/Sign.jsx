@@ -11,7 +11,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import Form from 'grommet/components/Form';
 import Footer from 'grommet/components/Footer';
 import FormField from 'grommet/components/FormField';
-import Anchor from 'grommet/components/Anchor';
+// import Anchor from 'grommet/components/Anchor';
 import LikeIcon from 'grommet/components/icons/base/Like';
 import UploadIcon from 'grommet/components/icons/base/Upload';
 import Task from './Task';
@@ -325,10 +325,10 @@ class App extends Component {
               </FormField>
               <FormField
                 label="描述"
-                help={
-                  <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
-                  </p>
-                }
+                // help={
+                //   <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
+                //   </p>
+                // }
                 error={error.description}
               >
                 <TextareaAutosize

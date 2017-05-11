@@ -212,7 +212,7 @@ class App extends Component {
               );
             })}
           </div>
-          <div style={{ display: 'block' }}>
+          <div style={{ width: '90%', maxWidth: 500 }}>
             { stateIsJoin ?
               <PostSign id={id} />
               :
