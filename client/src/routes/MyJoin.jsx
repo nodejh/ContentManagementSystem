@@ -26,6 +26,7 @@ class App extends Component {
 
     this.getMyJoinList = this.getMyJoinList.bind(this);
     this.checkIsLogin = this.checkIsLogin.bind(this);
+    this.hideToast = this.hideToast.bind(this);
   }
 
 
@@ -65,6 +66,12 @@ class App extends Component {
     if (!res.isLogin) {
       this.setState({ isNotLogin: true });
     }
+  }
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
   }
 
   render() {

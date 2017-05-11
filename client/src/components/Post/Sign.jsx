@@ -14,6 +14,7 @@ import FormField from 'grommet/components/FormField';
 import Anchor from 'grommet/components/Anchor';
 import LikeIcon from 'grommet/components/icons/base/Like';
 import UploadIcon from 'grommet/components/icons/base/Upload';
+// TODO task list
 import { sign, signList } from './../../models/post';
 import { checkIsImage, checkSize } from './../../utils/file';
 

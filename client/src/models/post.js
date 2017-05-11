@@ -65,20 +65,22 @@ const isJoin = async (id) => {
 };
 
 
-const sign = async (payload) => {
-  const options = {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-    credentials: 'include',
-  };
-  return request('/api/v0.1/post/sign', options);
-};
+// // TODO delete
+// const sign = async (payload) => {
+//   const options = {
+//     method: 'POST',
+//     headers: {
+//       Accept: 'application/json',
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(payload),
+//     credentials: 'include',
+//   };
+//   return request('/api/v0.1/post/sign', options);
+// };
 
-const signList = async id => request(`/api/v0.1/post/signList/${id}`);
+// // TODO delete
+// const signList = async id => request(`/api/v0.1/post/signList/${id}`);
 
 
 const users = async id => request(`/api/v0.1/post/users/${id}`);
@@ -91,8 +93,8 @@ export {
   myList,
   join,
   isJoin,
-  sign,
+  // sign,
   users,
   myJoin,
-  signList,
+  // signList,
 };

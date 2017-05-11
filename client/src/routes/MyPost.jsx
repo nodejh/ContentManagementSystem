@@ -28,6 +28,7 @@ class App extends Component {
 
     this.getMyPostList = this.getMyPostList.bind(this);
     this.checkIsLogin = this.checkIsLogin.bind(this);
+    this.hideToast = this.hideToast.bind(this);
   }
 
 
@@ -67,6 +68,12 @@ class App extends Component {
     if (!res.isLogin) {
       this.setState({ isNotLogin: true });
     }
+  }
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
   }
 
   render() {
@@ -155,7 +162,7 @@ class App extends Component {
                     />
                   }
                   headingStrong={false}
-                  link={<Link to={`/detail/${item.id}`}>查看详情</Link>}
+                  link={<Link to={`/myPostDetail/${item.id}`}>查看详情</Link>}
                   style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
                 />
               );

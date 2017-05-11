@@ -17,11 +17,11 @@ class App extends Component {
     this.state = {
       form: this.props.info,
       error: {
-        phone: null,
-        name: null,
-        school: null,
-        major: null,
-        introduce: null,
+        phone: '',
+        name: '',
+        school: '',
+        major: '',
+        introduce: '',
       },
       toast: {
         size: 'medium', // small|medium|large
@@ -108,7 +108,7 @@ class App extends Component {
           <FormField label="姓名" error={error.name}>
             <TextInput
               placeHolder="请填写您的姓名"
-              value={form.name}
+              value={form.name ? form.name : ''}
               onDOMChange={event => this.onDOMChange(event, 'name')}
             />
           </FormField>
@@ -118,13 +118,14 @@ class App extends Component {
               multiple={false}
               inline={false}
               options={['男', '女']}
-              value={form.gender}
+              value={form.gender ? form.gender : ''}
               onChange={event => this.onSelectChange(event, 'gender')}
             />
           </FormField>
           <FormField label="学校" error={error.school}>
             <TextInput
-              placeHolder="请填写您的学校" value={form.school}
+              placeHolder="请填写您的学校"
+              value={form.school ? form.school : ''}
               onDOMChange={event => this.onDOMChange(event, 'school')}
             />
           </FormField>
@@ -134,7 +135,7 @@ class App extends Component {
               multiple={false}
               inline={false}
               options={['理', '工', '农', '医', '商']}
-              value={form.major}
+              value={form.major ? form.major : ''}
               onChange={event => this.onSelectChange(event, 'major')}
             />
           </FormField>
@@ -144,7 +145,7 @@ class App extends Component {
               useCacheForDOMMeasurements
               minRows={3}
               maxRows={6}
-              value={form.introduce}
+              value={form.introduce ? form.introduce : ''}
               onChange={event => this.onDOMChange(event, 'introduce')}
             />
           </FormField>

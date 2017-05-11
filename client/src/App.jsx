@@ -13,6 +13,7 @@ import Sign from './routes/Sign';
 import Post from './routes/Post';
 import MyPost from './routes/MyPost';
 import MyJoin from './routes/MyJoin';
+import MyPostDetail from './routes/MyPostDetail';
 import PostDetail from './routes/PostDetail';
 import User from './routes/User';
 
@@ -116,6 +117,7 @@ class App extends Component {
                   <Route path="/post" component={Post} />
                   <Route path="/myPost" component={MyPost} />
                   <Route path="/myJoin" component={MyJoin} />
+                  <Route path="/myPostDetail/:id" component={MyPostDetail} />
                   <Route path="/detail/:id" component={PostDetail} />
                   <Route path="/user" component={User} />
                 </div>

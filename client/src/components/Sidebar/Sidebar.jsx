@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import Toast from 'grommet/components/Toast';
 import Sidebar from 'grommet/components/Sidebar';
 import Header from 'grommet/components/Header';
@@ -20,7 +19,6 @@ class App extends Component {
     super(props);
     this.state = {
       isLogin: false,
-      redirectToLogin: false,
       toast: {
         size: 'medium', // small|medium|large
         status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
@@ -42,8 +40,10 @@ class App extends Component {
     try {
       const res = await logout();
       if (res.success) {
-        console.log('res: ', res);
-        this.setState({ redirectToLogin: true });
+        this.setState({ redirectToLogin: true }, () => {
+          // eslint-disable-next-line
+          window.location.href = '/login';
+        });
       } else {
         toast.show = true;
         toast.status = 'critical';
@@ -51,7 +51,7 @@ class App extends Component {
         this.setState({ toast });
       }
     } catch (exception) {
-      console.log('exception: ', exception);
+      // console.log('exception: ', exception);
       toast.show = true;
       toast.status = 'critical';
       toast.message = exception.message || '退出登录失败，请重试';
@@ -79,7 +79,7 @@ class App extends Component {
     console.log(' this.context: ', this.context);
     // eslint-disable-next-line
     const pathname = window.location.pathname;
-    const { isLogin: stateIsLogin, redirectToLogin, toast } = this.state;
+    const { isLogin: stateIsLogin, toast } = this.state;
     return (
       <Sidebar
         colorIndex="neutral-1" size="small"
@@ -143,9 +143,6 @@ class App extends Component {
                   登录
                 </Anchor>
               )
-          }
-          {
-            redirectToLogin && <Redirect to="/login" />
           }
         </Footer>
       </Sidebar>

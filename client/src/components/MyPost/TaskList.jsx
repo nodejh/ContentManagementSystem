@@ -1,0 +1,305 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import Loadable from 'react-loading-overlay';
+import TextareaAutosize from 'react-textarea-autosize';
+import Form from 'grommet/components/Form';
+import FormFields from 'grommet/components/FormFields';
+import FormField from 'grommet/components/FormField';
+import Button from 'grommet/components/Button';
+import Toast from 'grommet/components/Toast';
+import Card from 'grommet/components/Card';
+import AddIcon from 'grommet/components/icons/base/Add';
+import { list as taskList, sign as taskSign } from './../../models/task';
+
+class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      isShowTaskHistory: false,
+      list: [],
+      form: { content: null },
+      error: { content: null },
+      toast: {
+        size: 'medium', // small|medium|large
+        status: 'ok', // toast 类型 critical|warning|ok|disabled|unknown
+        message: null,
+        show: false, // 是否显示 toast
+      },
+    };
+    this.onDOMChange = this.onDOMChange.bind(this);
+    this.showTaskHistory = this.showTaskHistory.bind(this);
+    this.hideTaskHistory = this.hideTaskHistory.bind(this);
+    this.getTaskList = this.getTaskList.bind(this);
+    this.hideToast = this.hideToast.bind(this);
+    this.handleAddTask = this.handleAddTask.bind(this);
+  }
+
+
+  componentWillMount() {
+    this.getTaskList();
+  }
+
+  /**
+   * 监听输入框 DOM 改变事件，并获取输入框的值，更新 state
+   * @param {object} event DOM 事件
+   * @param {string} key  需要更新的 state 的 key
+   */
+  onDOMChange(event, key) {
+    const { value } = event.target;
+    const { form, error } = this.state;
+    form[key] = value;
+    error[key] = null;
+    this.setState({ form });
+  }
+
+  /**
+   * get post task list by post id
+   * @return {Promise.<void>}
+   */
+  async getTaskList() {
+    const { toast } = this.state;
+    const { id } = this.props;
+    try {
+      // console.log('taskList: ', taskList);
+      const res = await taskList(id);
+      // console.log('res: ', res);
+      if (res.success) {
+        this.setState({ list: res.list });
+      } else {
+        toast.show = true;
+        toast.status = 'critical';
+        toast.message = res.message || '获取任务表失败，请重新进入该页面';
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '获取任务表失败，请重新进入该页面';
+      this.setState({ toast });
+    }
+  }
+
+  showTaskHistory() {
+    this.setState({ isShowTaskHistory: true });
+  }
+
+  hideTaskHistory() {
+    this.setState({ isShowTaskHistory: false });
+  }
+
+
+  /**
+   * add task
+   * @param {number|string} id post id
+   */
+  async handleAddTask() {
+    const { id } = this.props; // post id
+    // console.log('id: ', id);
+    const { form, toast } = this.state;
+    if (!form.content) {
+      const { error } = this.state;
+      error.content = '任务描述不能为空';
+      this.setState({ error });
+      return false;
+    }
+    const data = { ...form, pid: id };
+    try {
+      const res = await taskSign({ values: data });
+      if (res.success) {
+        toast.show = true;
+        toast.message = '发布成功';
+        toast.status = 'ok';
+        this.setState({ toast, loading: false }, () => {
+          // get task list again
+          this.getTaskList();
+        });
+      } else {
+        toast.show = true;
+        toast.message = '发布失败，请重试';
+        toast.status = 'critical';
+        this.setState({ toast, loading: false });
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.show = true;
+      toast.message = '发布失败，请重试';
+      toast.status = 'critical';
+      this.setState({ toast, loading: false });
+    }
+    return true;
+  }
+
+
+  /**
+   * get sign list of task
+   * @param {number|string} id task id
+   */
+  handleGetSignList(id) {
+    console.log('id: ', id);
+    this.setState({ });
+  }
+
+
+  hideToast() {
+    const { toast } = this.state;
+    toast.show = false;
+    this.setState({ toast });
+  }
+
+  render() {
+    const { loading, toast, list, isShowTaskHistory, form, error } = this.state;
+    let taskToday = null;
+    const taskHistory = list.filter((item) => {
+      if (new Date(item.datetime).toLocaleDateString() === new Date().toLocaleDateString()) {
+        taskToday = item;
+        return false;
+      }
+      return true;
+    });
+    // console.log('taskToday: ', taskToday);
+    return (
+      <Loadable
+        active={loading}
+        spinner
+        animate
+        style={loading ? { height: '100%', width: '100%', position: 'fixed' } : { width: '100%' }}
+      >
+        {
+          toast.show && (
+            <Toast
+              status={toast.status}
+              onClose={this.hideToast}
+            >
+              {toast.message}
+            </Toast>
+          )
+        }
+
+        {
+          taskToday && (
+            <div style={{ border: '1px solid #eee', margin: '20px auto' }}>
+              <Card
+                label="今日任务"
+                description={(
+                  <div>
+                    <div style={{ margin: 10 }}>
+                      {taskToday.content}
+                    </div>
+                    <span style={{ fontSize: '.8em' }}>
+                      发布于{moment(taskToday.datetime).format('MM/DD/YYYY h:mm:ss')}
+                    </span>
+                  </div>
+                )}
+              />
+              <Button
+                label="打卡列表"
+                onClick={() => this.handleGetSignList(taskToday.id)}
+                primary={false}
+                secondary={false}
+                accent={false}
+                critical
+                plain
+                style={{ fontSize: '.8em' }}
+              />
+            </div>
+          )
+        }
+
+        {
+          !taskToday && (
+            <div style={{ width: '100%' }}>
+              <Form>
+                <FormFields>
+                  <FormField label="任务描述" error={error.content} className="FixItem">
+                    <TextareaAutosize
+                      style={{ marginTop: 20 }}
+                      useCacheForDOMMeasurements
+                      minRows={3}
+                      maxRows={6}
+                      value={form.content ? form.content : ''}
+                      onChange={event => this.onDOMChange(event, 'content')}
+                    />
+                  </FormField>
+                </FormFields>
+                <Button
+                  icon={<AddIcon />}
+                  label="添加任务"
+                  onClick={() => this.handleAddTask()}
+                  primary
+                  secondary={false}
+                  plain={false}
+                  style={{ marginTop: 20 }}
+                />
+              </Form>
+            </div>
+          )
+        }
+
+        {
+          isShowTaskHistory && taskHistory.length === 0 ? '历史任务' : taskHistory.map(item => (
+            <div key={item.id} style={{ border: '1px solid #eee', margin: '20px auto' }}>
+              <Card
+                label={(
+                  <p>{moment(item.datetime).format('MM/DD/YYYY h:mm:ss')}</p>
+                )}
+                description={(
+                  <div>
+                    <div style={{ margin: 10 }}>
+                      {item.content}
+                    </div>
+                  </div>
+                )}
+              />
+              <Button
+                label="打卡列表"
+                onClick={() => this.handleGetSignList(item.id)}
+                primary={false}
+                secondary={false}
+                accent={false}
+                critical
+                plain
+                style={{ fontSize: '.8em' }}
+              />
+            </div>
+            ),
+          )
+        }
+        {
+          isShowTaskHistory ?
+            <Button
+              label="收起历史任务"
+              onClick={() => this.hideTaskHistory()}
+              primary={false}
+              secondary={false}
+              accent={false}
+              critical
+              plain
+              style={{ fontSize: '.8em', float: 'right', color: 'rgb(142, 142, 142)' }}
+            />
+            :
+            <Button
+              label="显示历史任务"
+              onClick={() => this.showTaskHistory()}
+              primary={false}
+              secondary={false}
+              accent={false}
+              critical
+              plain
+              style={{ fontSize: '.8em', float: 'right', color: 'rgb(142, 142, 142)' }}
+            />
+        }
+      </Loadable>
+    );
+  }
+}
+
+
+App.propTypes = {
+  id: PropTypes.string.isRequired,
+};
+
+
+export default App;

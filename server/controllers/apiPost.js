@@ -43,12 +43,12 @@ const list = async (ctx) => {
   try {
     const sql = 'select * from posts order by id desc';
     const postList = await query(sql);
-    result.message = '获取任务列表成功';
+    result.message = '获取活动列表成功';
     result.success = true;
     result.list = postList;
   } catch (exception) {
     console.log('exception: ', exception);
-    result.message = exception.message || '获取任务列表失败，请重试';
+    result.message = exception.message || '获取活动列表失败，请重试';
   } finally {
     ctx.body = result;
   }
@@ -68,12 +68,12 @@ const myList = async (ctx) => {
     const userId = ctx.session.user.id;
     const sql = 'select * from posts where uid = ? order by id desc';
     const postList = await query(sql, [userId]);
-    result.message = '获取任务列表成功';
+    result.message = '获取活动列表成功';
     result.success = true;
     result.list = postList;
   } catch (exception) {
     console.log('exception: ', exception);
-    result.message = exception.message || '获取任务列表失败，请重试';
+    result.message = exception.message || '获取活动列表失败，请重试';
   } finally {
     ctx.body = result;
   }
@@ -93,12 +93,12 @@ const myJoin = async (ctx) => {
     const userId = ctx.session.user.id;
     const sql = 'select * from `join` left join `posts` on `join`.pid = `posts`.id where `join`.uid = ? order by `join`.id desc';
     const postList = await query(sql, [userId]);
-    result.message = '获取任务列表成功';
+    result.message = '获取活动列表成功';
     result.success = true;
     result.list = postList;
   } catch (exception) {
     console.log('exception: ', exception);
-    result.message = exception.message || '获取任务列表失败，请重试';
+    result.message = exception.message || '获取活动列表失败，请重试';
   } finally {
     ctx.body = result;
   }
@@ -123,12 +123,12 @@ const detailById = async (ctx) => {
   try {
     const sql = 'select * from posts where id = ?';
     const post = await query(sql, [id]);
-    result.message = '获取任务列表成功';
+    result.message = '获取活动列表成功';
     result.success = true;
     result.post = post[0];
   } catch (exception) {
     console.log('exception: ', exception);
-    result.message = exception.message || '获取任务列表失败，请重试';
+    result.message = exception.message || '获取活动列表失败，请重试';
   } finally {
     ctx.body = result;
   }
