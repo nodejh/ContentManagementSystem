@@ -252,36 +252,6 @@ class App extends Component {
         }
 
         {
-          !taskToday && (
-            <div style={{ width: '100%' }}>
-              <Form>
-                <FormFields>
-                  <FormField label="任务描述" error={error.content} className="FixItem">
-                    <TextareaAutosize
-                      style={{ marginTop: 20 }}
-                      useCacheForDOMMeasurements
-                      minRows={3}
-                      maxRows={6}
-                      value={form.content ? form.content : ''}
-                      onChange={event => this.onDOMChange(event, 'content')}
-                    />
-                  </FormField>
-                </FormFields>
-                <Button
-                  icon={<AddIcon />}
-                  label="添加任务"
-                  onClick={() => this.handleAddTask()}
-                  primary
-                  secondary={false}
-                  plain={false}
-                  style={{ marginTop: 20 }}
-                />
-              </Form>
-            </div>
-          )
-        }
-
-        {
           isShowTaskHistory && taskHistory.length === 0 ?
             '历史任务'
             :
