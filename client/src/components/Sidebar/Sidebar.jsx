@@ -111,10 +111,10 @@ class App extends Component {
         <Box flex="grow" justify="start">
           <Menu primary>
             <Anchor href="/" className={pathname === '/' && 'active'}>
-              所有任务
+              所有活动
             </Anchor>
             <Anchor href="/post" className={pathname === '/post' && 'active'}>
-              发布任务
+              发布活动
             </Anchor>
             <Anchor href="/myPost" className={pathname === '/myPost' && 'active'}>
               我的发布

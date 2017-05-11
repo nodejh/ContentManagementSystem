@@ -113,7 +113,7 @@ class App extends Component {
 
 
   /**
-   * 打卡任务
+   * 打卡活动
    */
   async onSubmit() {
     // console.log('this.state: ', this.state);

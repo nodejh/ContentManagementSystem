@@ -157,7 +157,7 @@ class App extends Component {
 
 
   /**
-   * 发布任务
+   * 发布活动
    */
   async onSubmit() {
     // console.log('this.state: ', this.state);
@@ -259,7 +259,7 @@ class App extends Component {
               <Form>
                 <Header>
                   <Heading>
-                    发布任务
+                    发布活动
                   </Heading>
                 </Header>
                 <FormField label="上传封面图">
@@ -271,9 +271,9 @@ class App extends Component {
                   </FileUpload>
                 </FormField>
                 <FormFields>
-                  <FormField label="任务标题" error={error.title}>
+                  <FormField label="活动标题" error={error.title}>
                     <TextInput
-                      placeHolder="请填写任务标题"
+                      placeHolder="请填写活动标题"
                       onDOMChange={event => this.onDOMChange(event, 'title')}
                     />
                   </FormField>
@@ -297,7 +297,7 @@ class App extends Component {
                   </FormField>
                 </FormFields>
                 <FormField
-                  label="任务描述"
+                  label="活动描述"
                   help={
                     <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
                     </p>

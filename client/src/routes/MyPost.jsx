@@ -50,14 +50,14 @@ class App extends Component {
       } else {
         toast.status = 'critical';
         toast.show = true;
-        toast.message = '获取任务列表失败，请重试';
+        toast.message = '获取活动列表失败，请重试';
         this.setState({ toast });
       }
     } catch (exception) {
       // console.log('exception: ', exception);
       toast.show = true;
       toast.status = 'critical';
-      toast.message = exception.message || '获取任务列表失败，请重试';
+      toast.message = exception.message || '获取活动列表失败，请重试';
       this.setState({ toast });
     }
   }

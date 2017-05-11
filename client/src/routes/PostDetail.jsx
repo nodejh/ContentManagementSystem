@@ -65,13 +65,13 @@ class App extends Component {
       } else {
         toast.status = 'critical';
         toast.show = true;
-        toast.message = '获取任务详情失败，请重试';
+        toast.message = '获取活动详情失败，请重试';
         this.setState({ toast });
       }
     } catch (exception) {
       toast.show = true;
       toast.status = 'critical';
-      toast.message = exception.message || '获取任务详情失败，请重试';
+      toast.message = exception.message || '获取活动详情失败，请重试';
       this.setState({ toast });
     }
     return true;
