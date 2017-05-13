@@ -12,7 +12,7 @@ import Button from 'grommet/components/Button';
 import FormFields from 'grommet/components/FormFields';
 import FormField from 'grommet/components/FormField';
 import moment from 'moment';
-import { comment, signList } from './../models/task';
+import { comment, signListOfMyTask } from './../models/task';
 
 class App extends Component {
   constructor(props) {
@@ -106,7 +106,7 @@ class App extends Component {
     const { toast } = this.state;
     const { taskId } = this.props.match.params;
     try {
-      const res = await signList(taskId);
+      const res = await signListOfMyTask(taskId);
       console.log('res: ', res);
       if (res.success) {
         this.setState({ list: res.signList || [] });

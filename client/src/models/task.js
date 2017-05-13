@@ -34,6 +34,12 @@ const signList = async id => request(`/api/v0.1/task/signList/${id}`);
 
 
 /**
+ * sign list of my task
+ * @param id
+ */
+const signListOfMyTask = async id => request(`/api/v0.1/task/signListOfMyTask/${id}`);
+
+/**
  * sign for a task
  * @param payload
  * @return {Promise.<Object>}
@@ -76,4 +82,5 @@ export {
   sign,
   todayTask,
   comment,
+  signListOfMyTask,
 };

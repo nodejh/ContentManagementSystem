@@ -93,6 +93,43 @@ const signList = async (ctx) => {
 };
 
 
+const signListOfMyTask = async (ctx) => {
+  const result = { success: false, message: '获取打卡列表失败', isLogin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  try {
+    const { id = null } = ctx.params;
+    const userId = ctx.session.user.id;
+    const sql = 'select ' +
+      '`sign`.id, ' +
+      '`sign`.uid, ' +
+      '`sign`.tid, ' +
+      '`sign`.picture, ' +
+      '`sign`.`datetime`, ' +
+      '`sign`.`comment`, ' +
+      '`sign`.`description`, ' +
+      '`users`.`name` ' +
+      'from `sign` ' +
+      'left join `users` on `sign`.uid = `users`.`id` ' +
+      'left join `tasks` on `sign`.tid = `tasks`.`id` ' +
+      'left join `posts` on `tasks`.pid = `posts`.`id` ' +
+      'where `sign`.tid = ? and `posts`.uid = ? order by `sign`.id desc';
+    const res = await query(sql, [id, userId]);
+    result.message = '获取打卡列表成功';
+    result.success = true;
+    result.signList = res;
+  } catch (exception) {
+    result.message = exception.message || '获取打卡列表成功';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
 const sign = async (ctx) => {
   const result = { success: false, message: '', auth: false };
   if (!(ctx.session.user && ctx.session.user.id)) {
@@ -181,4 +218,5 @@ module.exports = {
   sign,
   today,
   comment,
+  signListOfMyTask,
 };
