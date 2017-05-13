@@ -222,16 +222,7 @@ class App extends Component {
                   </div>
                 )}
               />
-              <Button
-                label="打卡列表"
-                onClick={() => this.handleGetSignList(taskToday.id)}
-                primary={false}
-                secondary={false}
-                accent={false}
-                critical
-                plain
-                style={{ fontSize: '.8em' }}
-              />
+              <Link to={`/myPostSignList/${taskToday.id}`} style={{ margin: '20px 10px' }}>打卡列表</Link>
               { isShowTodaySignList && todaySignList.length === 0 ?
                 <p style={{ width: '100%', margin: 10 }}>暂无打卡记录</p>
                 :
@@ -282,7 +273,7 @@ class App extends Component {
         }
 
         {
-          isShowTaskHistory && taskHistory.length === 0 ? '历史任务' : taskHistory.map(item => (
+          isShowTaskHistory && (taskHistory.length === 0 ? '暂无历史任务' : taskHistory.map(item => (
             <div key={item.id} style={{ border: '1px solid #eee', margin: '20px auto' }}>
               <Card
                 label={(
@@ -296,19 +287,10 @@ class App extends Component {
                   </div>
                 )}
               />
-              <Button
-                label="打卡列表"
-                primary={false}
-                secondary={false}
-                accent={false}
-                critical
-                plain
-                style={{ fontSize: '.8em' }}
-              />
-              <Link to={`/signList/${item.id}`} />
+              <Link to={`/myPostSignList/${item.id}`} style={{ margin: '20px 10px' }}>打卡列表</Link>
             </div>
             ),
-          )
+          ))
         }
         {
           isShowTaskHistory ?

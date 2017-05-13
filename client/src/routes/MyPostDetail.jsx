@@ -160,9 +160,9 @@ class App extends Component {
             label={
               (
                 <p>
-                  {moment(post.start_date).format('YYYY/M/D h:mm:ss')}
+                  {moment(post.start_date).format('YYYY/M/D HH:mm:ss')}
                   <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                  {moment(post.end_date).format('YYYY/M/D h:mm:ss')}
+                  {moment(post.end_date).format('YYYY/M/D HH:mm:ss')}
                 </p>
               )
             }
@@ -197,7 +197,6 @@ class App extends Component {
           <div style={{ width: '90%', maxWidth: 500 }}>
             <TaskList id={id} />
           </div>
-
         </Box>
       </div>
     );

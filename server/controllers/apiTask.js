@@ -74,6 +74,7 @@ const signList = async (ctx) => {
       '`sign`.tid, ' +
       '`sign`.picture, ' +
       '`sign`.`datetime`, ' +
+      '`sign`.`comment`, ' +
       '`sign`.`description`, ' +
       '`users`.`name` ' +
       'from `sign` ' +
@@ -149,10 +150,35 @@ const today = async (ctx) => {
 };
 
 
+const comment = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { values } = ctx.request.body;
+    console.log('values: ', values);
+    const sql = 'update `sign` set comment = ? where id = ?';
+    await query(sql, [values.comment, values.id]);
+    result.message = '评论成功';
+    result.success = true;
+  } catch (exception) {
+    result.message = exception.message || '评论失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   list,
   add,
   signList,
   sign,
   today,
+  comment,
 };

@@ -8,5 +8,7 @@ router.get('/list/:id', apiTask.list);
 router.get('/signList/:id', apiTask.signList);
 router.post('/sign', apiTask.sign);
 router.get('/today/:id', apiTask.today);
+router.post('/comment', apiTask.comment);
+
 
 module.exports = router;

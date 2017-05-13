@@ -14,7 +14,7 @@ import FormFields from 'grommet/components/FormFields';
 import FormField from 'grommet/components/FormField';
 import TextInput from 'grommet/components/TextInput';
 import DateTime from 'grommet/components/DateTime';
-import Anchor from 'grommet/components/Anchor';
+// import Anchor from 'grommet/components/Anchor';
 import Toast from 'grommet/components/Toast';
 import UploadIcon from 'grommet/components/icons/base/Upload';
 import { checkSize, checkIsImage } from './../utils/file';

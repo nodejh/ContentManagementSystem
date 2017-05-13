@@ -54,10 +54,26 @@ const sign = async (payload) => {
 
 const todayTask = async id => request(`/api/v0.1/task/today/${id}`);
 
+
+const comment = async (payload) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+    credentials: 'include',
+  };
+  return request('/api/v0.1/task/comment', options);
+};
+
+
 export {
   list,
   add,
   signList,
   sign,
   todayTask,
+  comment,
 };

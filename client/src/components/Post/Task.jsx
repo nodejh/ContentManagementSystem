@@ -12,7 +12,7 @@ import Button from 'grommet/components/Button';
 import Toast from 'grommet/components/Toast';
 import Card from 'grommet/components/Card';
 // import AddIcon from 'grommet/components/icons/base/Add';
-import { list as taskList, add as taskAdd, signList } from './../../models/task';
+import { list as taskList, add as taskAdd } from './../../models/task';
 
 class App extends Component {
 
@@ -138,33 +138,34 @@ class App extends Component {
   }
 
 
-  /**
-   * get sign list of task
-   * @param {number|string} id task id
-   */
-  async handleGetSignList(id) {
-    console.log('id: ', id);
-    const { toast } = this.state;
-    this.setState({ loading: true });
-    try {
-      const res = await signList(id);
-      if (res.success) {
-        this.setState({ todaySignList: res.signList, loading: false, isShowTodaySignList: true });
-      } else {
-        toast.show = true;
-        toast.message = '获取打卡列表失败，请重试';
-        toast.status = 'critical';
-        this.setState({ toast, loading: false });
-      }
-    } catch (exception) {
-      console.log('exception: ', exception);
-      toast.show = true;
-      toast.message = '获取打卡列表失败，请重试';
-      toast.status = 'critical';
-      this.setState({ toast, loading: false });
-    }
-    this.setState({ });
-  }
+  // /**
+  //  * get sign list of task
+  //  * @param {number|string} id task id
+  //  */
+  // async handleGetSignList(id) {
+  //   console.log('id: ', id);
+  //   const { toast } = this.state;
+  //   this.setState({ loading: true });
+  //   try {
+  //     const res = await signList(id);
+  //     if (res.success) {
+  // eslint-disable-next-line
+  //       this.setState({ todaySignList: res.signList, loading: false, isShowTodaySignList: true });
+  //     } else {
+  //       toast.show = true;
+  //       toast.message = '获取打卡列表失败，请重试';
+  //       toast.status = 'critical';
+  //       this.setState({ toast, loading: false });
+  //     }
+  //   } catch (exception) {
+  //     console.log('exception: ', exception);
+  //     toast.show = true;
+  //     toast.message = '获取打卡列表失败，请重试';
+  //     toast.status = 'critical';
+  //     this.setState({ toast, loading: false });
+  //   }
+  //   this.setState({ });
+  // }
 
 
   hideToast() {
@@ -223,16 +224,7 @@ class App extends Component {
                   </div>
                 )}
               />
-              <Button
-                label="打卡列表"
-                onClick={() => this.handleGetSignList(taskToday.id)}
-                primary={false}
-                secondary={false}
-                accent={false}
-                critical
-                plain
-                style={{ fontSize: '.8em' }}
-              />
+              <Link to={`/signList/${taskToday.id}`} style={{ margin: '20px 10px' }}>打卡列表</Link>
               { isShowTodaySignList && (todaySignList.length === 0 ?
                 <p style={{ width: '100%', margin: 10 }}>暂无打卡记录</p>
                 :
@@ -270,16 +262,7 @@ class App extends Component {
                     </div>
                   )}
                 />
-                <Button
-                  label="打卡列表"
-                  primary={false}
-                  secondary={false}
-                  accent={false}
-                  critical
-                  plain
-                  style={{ fontSize: '.8em' }}
-                />
-                <Link to={`/signList/${item.id}`} />
+                <Link to={`/signList/${item.id}`} style={{ margin: '20px 10px' }}>打卡列表</Link>
               </div>
             ),
           ))
