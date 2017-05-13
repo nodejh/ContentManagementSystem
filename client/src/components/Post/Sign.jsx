@@ -325,10 +325,6 @@ class App extends Component {
               </FormField>
               <FormField
                 label="描述"
-                // help={
-                //   <p>支持 <Anchor href="http://wowubuntu.com/markdown/basic.html" target="_blank">Markdown 语法</Anchor>
-                //   </p>
-                // }
                 error={error.description}
               >
                 <TextareaAutosize

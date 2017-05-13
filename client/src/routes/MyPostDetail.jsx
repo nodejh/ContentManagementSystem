@@ -6,6 +6,7 @@ import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
+import Image from 'grommet/components/Image';
 import UserIcon from 'grommet/components/icons/base/User';
 import Markdown from 'grommet/components/Markdown';
 import TaskList from './../components/MyPost/TaskList';
@@ -153,8 +154,9 @@ class App extends Component {
             )
           }
 
+          <Image src={post.picture && `/upload/album/${post.picture}`} />
           <Card
-            thumbnail={post.picture && `/upload/album/${post.picture}`}
+            // thumbnail={post.picture && `/upload/album/${post.picture}`}
             label={
               (
                 <p>

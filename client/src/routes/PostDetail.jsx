@@ -8,6 +8,7 @@ import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
 import UserIcon from 'grommet/components/icons/base/User';
 import Markdown from 'grommet/components/Markdown';
+import Image from 'grommet/components/Image';
 import PostJoin from './../components/Post/Join';
 import PostSign from './../components/Post/Sign';
 import { detailById, isJoin, users } from './../models/post';
@@ -173,8 +174,8 @@ class App extends Component {
             )
           }
 
+          <Image src={post.picture && `/upload/album/${post.picture}`} />
           <Card
-            thumbnail={post.picture && `/upload/album/${post.picture}`}
             label={
               (
                 <p>

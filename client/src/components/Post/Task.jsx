@@ -233,7 +233,7 @@ class App extends Component {
                 plain
                 style={{ fontSize: '.8em' }}
               />
-              { isShowTodaySignList && todaySignList.length === 0 ?
+              { isShowTodaySignList && (todaySignList.length === 0 ?
                 <p style={{ width: '100%', margin: 10 }}>暂无打卡记录</p>
                 :
                 todaySignList.map(itemSign => (
@@ -247,7 +247,7 @@ class App extends Component {
                       style={{ border: '1px solid #eee' }}
                     />
                   </div>
-                ))}
+                )))}
             </div>
           )
         }
