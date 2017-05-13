@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Loadable from 'react-loading-overlay';
 import Markdown from 'grommet/components/Markdown';
-import TextareaAutosize from 'react-textarea-autosize';
-import Form from 'grommet/components/Form';
-import FormFields from 'grommet/components/FormFields';
-import FormField from 'grommet/components/FormField';
+// import TextareaAutosize from 'react-textarea-autosize';
+// import Form from 'grommet/components/Form';
+// import FormFields from 'grommet/components/FormFields';
+// import FormField from 'grommet/components/FormField';
 import Button from 'grommet/components/Button';
 import Toast from 'grommet/components/Toast';
 import Card from 'grommet/components/Card';
-import AddIcon from 'grommet/components/icons/base/Add';
+// import AddIcon from 'grommet/components/icons/base/Add';
 import { list as taskList, add as taskAdd, signList } from './../../models/task';
 
 class App extends Component {
@@ -175,8 +175,7 @@ class App extends Component {
 
   render() {
     const { loading, toast, list,
-      isShowTaskHistory, isShowTodaySignList, todaySignList,
-      form, error }
+      isShowTaskHistory, isShowTodaySignList, todaySignList }
       = this.state;
     console.log('todaySignList: ', todaySignList);
     let taskToday = null;
@@ -187,7 +186,9 @@ class App extends Component {
       }
       return true;
     });
-    // console.log('taskToday: ', taskToday);
+    console.log('isShowTaskHistory: ', isShowTaskHistory);
+    console.log('taskToday: ', taskToday);
+    console.log('taskHistory: ', taskHistory);
     return (
       <Loadable
         active={loading}
@@ -252,8 +253,8 @@ class App extends Component {
         }
 
         {
-          isShowTaskHistory && taskHistory.length === 0 ?
-            '历史任务'
+          isShowTaskHistory && (taskHistory.length === 0 ?
+            '暂无历史任务'
             :
             taskHistory.map(item => (
               <div key={item.id} style={{ border: '1px solid #eee', margin: '20px auto' }}>
@@ -281,7 +282,7 @@ class App extends Component {
                 <Link to={`/signList/${item.id}`} />
               </div>
             ),
-          )
+          ))
         }
         {
           isShowTaskHistory ?
