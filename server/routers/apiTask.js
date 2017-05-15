@@ -10,6 +10,7 @@ router.get('/signListOfMyTask/:id', apiTask.signListOfMyTask);
 router.post('/sign', apiTask.sign);
 router.get('/today/:id', apiTask.today);
 router.post('/comment', apiTask.comment);
+router.get('/isTodayTaskSigned/:todayTaskId', apiTask.isTodayTaskSigned);
 
 
 module.exports = router;

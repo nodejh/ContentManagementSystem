@@ -159,7 +159,11 @@ class App extends Component {
               console.log('item: ', item);
               return (
                 <div key={item.id} style={{ border: '1px solid #eee', margin: '30px 20px' }}>
-                  <Image src={item.picture && `/upload/album/${item.picture}`} />
+                  {
+                    item.picture && item.picture.split(',').map(picture => (
+                      <Image src={`/upload/album/${picture}`} />
+                    ))
+                  }
                   <Card
                     label={`${item.name ? item.name : '匿名'} ${moment(item.datetime).format('YYYY/M/D HH:mm:ss')}`}
                     description={
@@ -169,34 +173,43 @@ class App extends Component {
                   />
                   {
                     item.comment ?
-                      <p style={{ marginTop: 20 }}>评论: {item.comment}</p>
+                      (
+                        <div style={{ marginTop: 20 }}>
+                          评论:
+                          <p style={{ fontWeight: 900 }}>
+                            {item.comment}
+                          </p>
+                        </div>
+                      )
                       :
-                      <div style={{ margin: 20 }}>
-                        <Form>
-                          <FormFields>
-                            <FormField
-                              label="评论"
-                              error={error.comment}
-                            >
-                              <TextareaAutosize
-                                style={{ marginTop: 20 }}
-                                useCacheForDOMMeasurements
-                                minRows={5}
-                                maxRows={10}
-                                onChange={event => this.onDOMChange(event, item.id, 'comment')}
+                      (
+                        <div style={{ margin: 20 }}>
+                          <Form>
+                            <FormFields>
+                              <FormField
+                                label="评论"
+                                error={error.comment}
+                              >
+                                <TextareaAutosize
+                                  style={{ marginTop: 20 }}
+                                  useCacheForDOMMeasurements
+                                  minRows={5}
+                                  maxRows={10}
+                                  onChange={event => this.onDOMChange(event, item.id, 'comment')}
+                                />
+                              </FormField>
+                            </FormFields>
+                            <Footer pad={{ vertical: 'medium' }}>
+                              <Button
+                                label="发表评论"
+                                type="button"
+                                primary
+                                onClick={this.onSubmit}
                               />
-                            </FormField>
-                          </FormFields>
-                          <Footer pad={{ vertical: 'medium' }}>
-                            <Button
-                              label="发表评论"
-                              type="button"
-                              primary
-                              onClick={this.onSubmit}
-                            />
-                          </Footer>
-                        </Form>
-                      </div>
+                            </Footer>
+                          </Form>
+                        </div>
+                      )
                   }
                 </div>
               );

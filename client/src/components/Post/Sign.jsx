@@ -15,7 +15,7 @@ import FormField from 'grommet/components/FormField';
 import LikeIcon from 'grommet/components/icons/base/Like';
 import UploadIcon from 'grommet/components/icons/base/Upload';
 import Task from './Task';
-import { sign as taskSign, list as taskList } from './../../models/task';
+import { isTodayTaskSigned, list as taskList, sign as taskSign } from './../../models/task';
 import { checkIsImage, checkSize } from './../../utils/file';
 
 
@@ -25,6 +25,7 @@ class App extends Component {
     this.state = {
       loading: false,
       isShowSign: false,
+      isSigned: false,
       taskTodayId: null,
       // isShowTaskHistory: false,
       list: [],
@@ -40,6 +41,7 @@ class App extends Component {
       form: {
         picture: null,
         description: null,
+        pictureName: [],
       },
     };
     this.hideToast = this.hideToast.bind(this);
@@ -51,6 +53,7 @@ class App extends Component {
     this.handleUploadSuccess = this.handleUploadSuccess.bind(this);
     this.handleUploadFailed = this.handleUploadFailed.bind(this);
     this.getTaskList = this.getTaskList.bind(this);
+    this.handleIsSigned = this.handleIsSigned.bind(this);
     // this.showTaskHistory = this.showTaskHistory.bind(this);
     // this.hideTaskHistory = this.hideTaskHistory.bind(this);
     // this.handleGetTodayTask = this.handleGetTodayTask.bind(this);
@@ -109,6 +112,7 @@ class App extends Component {
     if (loading) {
       return false;
     }
+    console.log('values.pictureName: ', values.pictureName);
     if (!values.description) {
       const { error } = this.state;
       error.description = '描述不能为空';
@@ -117,7 +121,7 @@ class App extends Component {
     }
     const data = {
       description: values.description,
-      picture: values.picture,
+      picture: values.pictureName.join(','),
       tid: taskTodayId,
     };
     try {
@@ -168,7 +172,9 @@ class App extends Component {
         if (taskToday.length > 0) {
           taskTodayId = taskToday[0].id;
         }
-        this.setState({ list: res.list, taskTodayId });
+        this.setState({ list: res.list, taskTodayId }, () => {
+          this.handleIsSigned(taskTodayId);
+        });
       } else {
         toast.show = true;
         toast.status = 'critical';
@@ -203,7 +209,7 @@ class App extends Component {
       this.setState({ toast, loading: false });
       return false;
     }
-    form.pictureName = name;
+    // form.pictureName = form.pictureName.push(name);
     this.setState({ loading: true, form });
     return true;
   }
@@ -217,6 +223,7 @@ class App extends Component {
     console.log('respArr: ', respArr);
     const { toast, form } = this.state;
     form.picture = respArr.fileName;
+    form.pictureName.push(respArr.fileName);
     toast.show = true;
     toast.message = '上传打卡图片成功';
     toast.status = 'ok';
@@ -244,29 +251,39 @@ class App extends Component {
     this.setState({ toast, loading: false });
   }
 
-  // async handleGetTodayTask() {
-  //   const { id } = this.props;
-  //   const { toast } = this.state;
-  //   try {
-  //     const res = await todayTask(id);
-  //     console.log('res: ', res);
-  //     if (res.success) {
-  //       this.setState({ todayTask: res.task.id });
-  //     } else {
-  //       toast.status = 'critical';
-  //       toast.show = true;
-  //       toast.message = res.message || '获取今日任务失败，请刷新重试';
-  //       this.setState({ toast });
-  //     }
-  //   } catch (exception) {
-  //     console.log('exception: ', exception);
-  //     toast.status = 'critical';
-  //     toast.show = true;
-  //     toast.message = exception.message || '获取今日任务失败，请刷新重试';
-  //     this.setState({ toast });
-  //   }
-  //   return true;
-  // }
+
+  /**
+   * check if is sign
+   * @param {string|number} todayTaskId
+   * @return {Promise.<boolean>}
+   */
+  async handleIsSigned(todayTaskId) {
+    const { toast } = this.state;
+    try {
+      const res = await isTodayTaskSigned(todayTaskId);
+      console.log('res: ', res);
+      if (res.success) {
+        if (res.isTodayTaskSigned) {
+          this.setState({ isSigned: true });
+        } else {
+          this.setState({ isSigned: false });
+        }
+      } else {
+        toast.status = 'critical';
+        toast.show = true;
+        toast.message = res.message || '获取今日任务失败，请刷新重试';
+        this.setState({ toast });
+      }
+    } catch (exception) {
+      console.log('exception: ', exception);
+      toast.status = 'critical';
+      toast.show = true;
+      toast.message = exception.message || '获取今日任务失败，请刷新重试';
+      this.setState({ toast });
+    }
+    return true;
+  }
+
 
   handleShowSign() {
     this.setState({ isShowSign: true });
@@ -279,7 +296,8 @@ class App extends Component {
   }
 
   render() {
-    const { toast, isShowSign, form, error, taskTodayId, list } = this.state;
+    const { toast, isShowSign, form, error, taskTodayId, list, isSigned } = this.state;
+    console.log('form: ', form);
     return (
       <div>
         {
@@ -299,26 +317,43 @@ class App extends Component {
 
         {
           !isShowSign && taskTodayId && (
-            <Button
-              icon={<LikeIcon />}
-              label="打卡"
-              onClick={() => this.handleShowSign()}
-              primary
-              secondary={false}
-              plain={false}
-            />
+            isSigned ?
+              <Button
+                icon={<LikeIcon />}
+                label="已打卡"
+                primary
+                secondary={false}
+                plain={false}
+              />
+              :
+              <Button
+                icon={<LikeIcon />}
+                label="打卡"
+                onClick={() => this.handleShowSign()}
+                primary
+                secondary={false}
+                plain={false}
+              />
           )
         }
 
         {
           isShowSign && taskTodayId && (
             <Form style={{ width: '100%' }}>
-              <FormField label="上传图片">
+              <FormField label="上传图片(可上传多张)">
                 <FileUpload options={this.uploadOptions} ref="fileUpload" style={{ padding: 20 }}>
                   <div ref="chooseAndUpload">
                     <Button icon={<UploadIcon />} label="点击上传" />
-                    <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '80%', position: 'absolute' }}>
-                      { form.picture && form.pictureName }
+                    <div
+                      style={{
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        width: '80%',
+                        position: 'absolute',
+                      }}
+                    >
+                      { form.picture && form.pictureName.join('\n') }
                     </div>
                   </div>
                 </FileUpload>

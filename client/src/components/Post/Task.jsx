@@ -224,7 +224,12 @@ class App extends Component {
                   </div>
                 )}
               />
-              <Link to={`/signList/${taskToday.id}`} style={{ margin: '20px 10px' }}>打卡列表</Link>
+              <Link
+                to={`/signList/${taskToday.id}`}
+                style={{ margin: '20px 10px' }}
+              >
+                 打卡列表
+               </Link>
               { isShowTodaySignList && (todaySignList.length === 0 ?
                 <p style={{ width: '100%', margin: 10 }}>暂无打卡记录</p>
                 :

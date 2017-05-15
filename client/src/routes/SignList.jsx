@@ -80,7 +80,11 @@ class App extends Component {
             console.log('item: ', item.datetime);
             return (
               <div key={item.id} style={{ border: '1px solid #eee', margin: '20px' }}>
-                <Image src={item.picture && `/upload/album/${item.picture}`} />
+                {
+                  item.picture && item.picture.split(',').map(picture => (
+                    <Image src={`/upload/album/${picture}`} />
+                  ))
+                }
                 <Card
                   label={`${item.name ? item.name : '匿名'} ${moment(item.datetime).format('YYYY/M/D HH:mm:ss')}`}
                   description={
@@ -88,7 +92,12 @@ class App extends Component {
                   }
                   style={{ border: '1px solid #eee' }}
                 />
-                <p style={{ marginTop: 20 }}>评论: {item.comment ? item.comment : '暂无'}</p>
+                <div style={{ marginTop: 20 }}>
+                  评论:
+                  <p style={{ fontWeight: 900 }}>
+                    {item.comment ? item.comment : '暂无'}
+                  </p>
+                </div>
               </div>
             );
           })

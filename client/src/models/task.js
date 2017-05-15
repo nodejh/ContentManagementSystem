@@ -75,6 +75,9 @@ const comment = async (payload) => {
 };
 
 
+const isTodayTaskSigned = async todayTaskId => request(`/api/v0.1/task/isTodayTaskSigned/${todayTaskId}`);
+
+
 export {
   list,
   add,
@@ -83,4 +86,5 @@ export {
   todayTask,
   comment,
   signListOfMyTask,
+  isTodayTaskSigned,
 };

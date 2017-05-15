@@ -211,6 +211,42 @@ const comment = async (ctx) => {
 };
 
 
+const isTodayTaskSigned = async (ctx) => {
+  const result = { success: false, message: '', auth: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.auth = true;
+  try {
+    const { todayTaskId = null } = ctx.params;
+    const userId = ctx.session.user.id;
+    const sql = 'select id from `sign` where `uid` = ? and `tid` = ? and `datetime` > ? and `datetime` < ?';
+    const yesterday = moment().subtract(1, 'days').format();
+    const tomorrow = moment().add(1, 'days').format();
+    console.log('userId :', userId);
+    console.log('todayTaskId :', todayTaskId);
+    console.log('yes: ', yesterday);
+    console.log('tomorrow: ', tomorrow);
+    const res = await query(sql, [userId, todayTaskId, yesterday, tomorrow]);
+    console.log('res : ', res);
+    if (res.length > 0) {
+      result.isTodayTaskSigned = true;
+    } else {
+      result.isTodayTaskSigned = false;
+    }
+    result.message = '查询是否打卡成功';
+    result.success = true;
+  } catch (exception) {
+    result.message = exception.message || '查询是否打卡失败，请重试';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   list,
   add,
@@ -219,4 +255,5 @@ module.exports = {
   today,
   comment,
   signListOfMyTask,
+  isTodayTaskSigned,
 };
