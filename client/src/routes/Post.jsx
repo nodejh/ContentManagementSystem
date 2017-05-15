@@ -281,7 +281,7 @@ class App extends Component {
                     <DateTime
                       id="date"
                       name="startDate"
-                      format="MM/DD/YYYY HH:mm:ss"
+                      format="MM/DD/YYYY"
                       value={form.startDate}
                       onChange={value => this.onDateChange(value, 'startDate')}
                     />
@@ -290,7 +290,7 @@ class App extends Component {
                     <DateTime
                       id="id"
                       name="endDate"
-                      format="MM/DD/YYYY HH:mm:ss"
+                      format="MM/DD/YYYY"
                       value={form.endDate}
                       onChange={value => this.onDateChange(value, 'endDate')}
                     />

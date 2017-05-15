@@ -160,9 +160,9 @@ class App extends Component {
             label={
               (
                 <p>
-                  {moment(post.start_date).format('YYYY/M/D HH:mm:ss')}
+                  {moment(post.start_date).format('YYYY/M/D')}
                   <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                  {moment(post.end_date).format('YYYY/M/D HH:mm:ss')}
+                  {moment(post.end_date).format('YYYY/M/D')}
                 </p>
               )
             }
