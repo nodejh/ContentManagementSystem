@@ -13,3 +13,9 @@ textarea {
 .grommetux-form-field__contents {
     margin-right: 24px;
 }
+
+pre {
+    word-wrap: normal;
+    width: 100%;
+    white-space: inherit;
+}
