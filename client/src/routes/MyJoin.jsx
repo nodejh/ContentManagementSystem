@@ -6,7 +6,7 @@ import Heading from 'grommet/components/Heading';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
-import Markdown from 'grommet/components/Markdown';
+// import Markdown from 'grommet/components/Markdown';
 import { myJoin } from './../models/post';
 import { isLogin } from './../models/user';
 
@@ -131,15 +131,14 @@ class App extends Component {
                       <p style={{ fontSize: '2em', fontWeight: 400, marginBottom: 0 }}>{item.title}</p>
                     </div>
                   )}
-                  description={
-                    <Markdown
-                      // eslint-disable-next-line
-                      content={item.description ?
+                  description={(
+                    <pre>
+                      {item.description ?
                         item.description.length > 100 ?
                           `${item.description.substring(0, 100)}...` : item.description
                         : ''}
-                    />
-                  }
+                    </pre>
+                  )}
                   headingStrong={false}
                   link={<Link to={`/detail/${item.id}`}>查看详情</Link>}
                   style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}

@@ -1,6 +1,7 @@
 {
   "extends": "airbnb",
   "rules": {
-    "react/no-string-refs": 0
+    "react/no-string-refs": 0,
+    "no-nested-ternary": 0
   }
 }

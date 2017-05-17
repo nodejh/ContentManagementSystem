@@ -6,9 +6,10 @@ import Heading from 'grommet/components/Heading';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
-import Markdown from 'grommet/components/Markdown';
+import Button from 'grommet/components/Button';
+// import Markdown from 'grommet/components/Markdown';
 import Status from 'grommet/components/icons/Status';
-import { myList } from './../models/post';
+import { myList, deletePost } from './../models/post';
 import { isLogin } from './../models/user';
 import { postStatus as constantsPostStatus } from './../utils/constants';
 
@@ -70,6 +71,29 @@ class App extends Component {
     }
   }
 
+  async handleDelete(id) {
+    const { toast } = this.state;
+    try {
+      const res = await deletePost(id);
+      // console.log('res: ', res);
+      if (res.success) {
+        // rerender post list
+        this.getMyPostList();
+      } else {
+        toast.status = 'critical';
+        toast.show = true;
+        toast.message = '获取活动列表失败，请重试';
+        this.setState({ toast });
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '获取活动列表失败，请重试';
+      this.setState({ toast });
+    }
+  }
+
   hideToast() {
     const { toast } = this.state;
     toast.show = false;
@@ -122,9 +146,7 @@ class App extends Component {
                   label={
                     (
                       <p>
-                        {moment(item.start_date).format('YYYY/M/D')}
-                        <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                        {moment(item.end_date).format('YYYY/M/D')}
+                        {moment(item.start_date).format('YYYY/M/D')}-{moment(item.end_date).format('YYYY/M/D')}
                       </p>
                     )
                   }
@@ -135,32 +157,42 @@ class App extends Component {
                         {
                           item.status === 0 ?
                             (
-                              <p>
+                              <span>
                                 <Status value="ok" />
                                 {constantsPostStatus[item.status]}
-                              </p>
+                              </span>
                             )
                             :
                             (
-                              <p>
+                              <span>
                                 <Status value="warning" />
                                 {constantsPostStatus[item.status]}
-                              </p>
+                              </span>
                             )
                         }
 
+                        <Button
+                          label="删除"
+                          onClick={() => this.handleDelete(item.id)}
+                          href="#"
+                          style={{
+                            border: '2px solid red',
+                            padding: '3px',
+                            fontSize: '1rem',
+                            marginLeft: '2rem',
+                          }}
+                        />
                       </div>
                     </div>
                   )}
-                  description={
-                    <Markdown
-                      // eslint-disable-next-line
-                      content={item.description ?
+                  description={(
+                    <pre>
+                      {item.description ?
                         item.description.length > 100 ?
                           `${item.description.substring(0, 100)}...` : item.description
                         : ''}
-                    />
-                  }
+                    </pre>
+                  )}
                   headingStrong={false}
                   link={<Link to={`/myPostDetail/${item.id}`}>查看详情</Link>}
                   style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}

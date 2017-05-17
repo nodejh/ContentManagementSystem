@@ -4,7 +4,6 @@ import moment from 'moment';
 import Card from 'grommet/components/Card';
 import Toast from 'grommet/components/Toast';
 import Box from 'grommet/components/Box';
-import Markdown from 'grommet/components/Markdown';
 import { list } from './../models/post';
 import { isLogin } from './../models/user';
 
@@ -95,22 +94,19 @@ class App extends Component {
                 label={
                   (
                     <p>
-                      {moment(item.start_date).format('YYYY/M/D h:mm:ss')}
-                      <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                      {moment(item.end_date).format('YYYY/M/D h:mm:ss')}
+                      {moment(item.start_date).format('YYYY/MM/DD')}-{moment(item.end_date).format('YYYY/MM/DD')}
                     </p>
                   )
                 }
                 heading={item.title}
-                description={
-                  <Markdown
-                    // eslint-disable-next-line
-                    content={item.description ?
+                description={(
+                  <pre>
+                    {item.description ?
                       item.description.length > 100 ?
                         `${item.description.substring(0, 100)}...` : item.description
                       : ''}
-                  />
-                }
+                  </pre>
+                )}
                 headingStrong={false}
                 link={<Link to={`/detail/${item.id}`}>查看详情</Link>}
                 style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}

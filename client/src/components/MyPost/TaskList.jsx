@@ -214,7 +214,7 @@ class App extends Component {
                 description={(
                   <div>
                     <div style={{ margin: 10 }}>
-                      {taskToday.content}
+                      <pre>{taskToday.content}</pre>
                     </div>
                     <span style={{ fontSize: '.8em' }}>
                       发布于{moment(taskToday.datetime).format('MM/DD/YYYY h:mm:ss')}
@@ -282,7 +282,7 @@ class App extends Component {
                 description={(
                   <div>
                     <div style={{ margin: 10 }}>
-                      {item.content}
+                      <pre>{item.content}</pre>
                     </div>
                   </div>
                 )}

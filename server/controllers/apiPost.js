@@ -291,6 +291,31 @@ const signList = async (ctx) => {
 };
 
 
+const deletePost = async (ctx) => {
+  const result = { success: false, message: '删除活动成功失败', isLogin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  try {
+    const { id } = ctx.request.body;
+    console.log('id: ', id);
+    const sql = 'delete from posts where id = ?';
+    await query(sql, [id]);
+    result.message = '删除活动成功';
+    result.success = true;
+  } catch (exception) {
+    console.log('exception: ', exception);
+    result.message = exception.message || '删除活动成功失败';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   insert,
   list,
@@ -302,4 +327,5 @@ module.exports = {
   users,
   myJoin,
   signList,
+  deletePost,
 };

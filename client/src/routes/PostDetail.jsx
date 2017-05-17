@@ -7,7 +7,7 @@ import Toast from 'grommet/components/Toast';
 import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
 import UserIcon from 'grommet/components/icons/base/User';
-import Markdown from 'grommet/components/Markdown';
+// import Markdown from 'grommet/components/Markdown';
 import Image from 'grommet/components/Image';
 import PostJoin from './../components/Post/Join';
 import PostSign from './../components/Post/Sign';
@@ -187,9 +187,7 @@ class App extends Component {
             }
             heading={post.title}
             description={
-              <Markdown
-                content={post.description}
-              />
+              (<pre>{post.description}</pre>)
             }
             headingStrong
             style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}

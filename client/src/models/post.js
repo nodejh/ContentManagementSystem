@@ -82,6 +82,18 @@ const isJoin = async (id) => {
 // // TODO delete
 // const signList = async id => request(`/api/v0.1/post/signList/${id}`);
 
+const deletePost = async (id) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id }),
+    credentials: 'include',
+  };
+  return request('/api/v0.1/post/delete', options);
+};
 
 const users = async id => request(`/api/v0.1/post/users/${id}`);
 
@@ -97,4 +109,5 @@ export {
   users,
   myJoin,
   // signList,
+  deletePost,
 };

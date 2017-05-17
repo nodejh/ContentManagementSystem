@@ -8,7 +8,7 @@ import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
 import Image from 'grommet/components/Image';
 import UserIcon from 'grommet/components/icons/base/User';
-import Markdown from 'grommet/components/Markdown';
+// import Markdown from 'grommet/components/Markdown';
 import TaskList from './../components/MyPost/TaskList';
 import { detailById, users } from './../models/post';
 import { isLogin } from './../models/user';
@@ -160,18 +160,16 @@ class App extends Component {
             label={
               (
                 <p>
-                  {moment(post.start_date).format('YYYY/M/D')}
-                  <span style={{ fontSize: '.7em', fontWeight: 100, marginRight: 3, marginLeft: 3 }}>至</span>
-                  {moment(post.end_date).format('YYYY/M/D')}
+                  {moment(post.start_date).format('YYYY/MM/DD')}-{moment(post.end_date).format('YYYY/MM/DD')}
                 </p>
               )
             }
             heading={post.title}
-            description={
-              <Markdown
-                content={post.description}
-              />
-            }
+            description={(
+              <pre>
+                {post.description}
+              </pre>
+            )}
             headingStrong
             style={{ margin: '10px 10px 20px 10px', backgroundColor: '#fff', width: '90%', maxWidth: 400 }}
           />

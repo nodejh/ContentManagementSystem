@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Loadable from 'react-loading-overlay';
-import Markdown from 'grommet/components/Markdown';
+// import Markdown from 'grommet/components/Markdown';
 // import TextareaAutosize from 'react-textarea-autosize';
 // import Form from 'grommet/components/Form';
 // import FormFields from 'grommet/components/FormFields';
@@ -216,7 +216,7 @@ class App extends Component {
                 description={(
                   <div>
                     <div style={{ margin: 10 }}>
-                      {taskToday.content}
+                      <pre>{taskToday.content}</pre>
                     </div>
                     <span style={{ fontSize: '.8em' }}>
                       发布于{moment(taskToday.datetime).format('MM/DD/YYYY h:mm:ss')}
@@ -238,9 +238,9 @@ class App extends Component {
                     <Card
                       thumbnail={itemSign.picture && `/upload/album/${itemSign.picture}`}
                       label={`${itemSign.name ? itemSign.name : '匿名'} ${moment(itemSign.date).format('YYYY/M/D h:mm:ss')}`}
-                      description={
-                        <Markdown content={itemSign.description} />
-                      }
+                      description={(
+                        <pre>{itemSign.description}</pre>
+                      )}
                       style={{ border: '1px solid #eee' }}
                     />
                   </div>
@@ -262,7 +262,7 @@ class App extends Component {
                   description={(
                     <div>
                       <div style={{ margin: 10 }}>
-                        {item.content}
+                        <pre>{item.content}</pre>
                       </div>
                     </div>
                   )}

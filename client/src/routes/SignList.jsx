@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Toast from 'grommet/components/Toast';
 import Card from 'grommet/components/Card';
 import Image from 'grommet/components/Image';
-import Markdown from 'grommet/components/Markdown';
+// import Markdown from 'grommet/components/Markdown';
 import moment from 'moment';
 import { signList } from './../models/task';
 
@@ -88,7 +88,9 @@ class App extends Component {
                 <Card
                   label={`${item.name ? item.name : '匿名'} ${moment(item.datetime).format('YYYY/M/D HH:mm:ss')}`}
                   description={
-                    <Markdown content={item.description} />
+                    (
+                      <pre>{item.description}</pre>
+                    )
                   }
                   style={{ border: '1px solid #eee' }}
                 />

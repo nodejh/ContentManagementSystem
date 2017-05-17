@@ -12,6 +12,7 @@ router.post('/isJoin', apiPost.isJoin);
 // router.post('/sign', apiPost.sign);
 router.get('/users/:id', apiPost.users);
 router.get('/myJoin', apiPost.myJoin);
+router.post('/delete', apiPost.deletePost);
 // router.get('/signList/:id', apiPost.signList);
 
 
