@@ -15,7 +15,7 @@ textarea {
 }
 
 pre {
-    word-wrap: normal;
+    /*word-wrap: normal;*/
     width: 100%;
     white-space: inherit;
 }
