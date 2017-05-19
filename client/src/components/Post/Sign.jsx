@@ -318,22 +318,26 @@ class App extends Component {
         {
           !isShowSign && taskTodayId && (
             isSigned ?
-              <Button
-                icon={<LikeIcon />}
-                label="已打卡"
-                primary
-                secondary={false}
-                plain={false}
-              />
+              <div style={{ display: 'block', textAlign: 'right' }}>
+                <Button
+                  icon={<LikeIcon />}
+                  label="已打卡"
+                  primary
+                  secondary={false}
+                  plain={false}
+                />
+              </div>
               :
-              <Button
-                icon={<LikeIcon />}
-                label="打卡"
-                onClick={() => this.handleShowSign()}
-                primary
-                secondary={false}
-                plain={false}
-              />
+              <div style={{ display: 'block', textAlign: 'right' }}>
+                <Button
+                  icon={<LikeIcon />}
+                  label="打卡"
+                  onClick={() => this.handleShowSign()}
+                  primary
+                  secondary={false}
+                  plain={false}
+                />
+              </div>
           )
         }
 
