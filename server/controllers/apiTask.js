@@ -247,6 +247,31 @@ const isTodayTaskSigned = async (ctx) => {
 };
 
 
+const signDelete = async (ctx) => {
+  const result = { success: false, message: '删除打卡失败', isLogin: false };
+  if (!(ctx.session.user && ctx.session.user.id)) {
+    result.message = '请登录后再操作';
+    ctx.body = result;
+    return false;
+  }
+  result.isLogin = true;
+  try {
+    const { id } = ctx.request.body;
+    console.log('id: ', id);
+    const sql = 'delete from sign where id = ?';
+    await query(sql, [id]);
+    result.message = '删除打卡成功';
+    result.success = true;
+  } catch (exception) {
+    console.log('exception: ', exception);
+    result.message = exception.message || '删除打卡失败';
+  } finally {
+    ctx.body = result;
+  }
+  return true;
+};
+
+
 module.exports = {
   list,
   add,
@@ -256,4 +281,5 @@ module.exports = {
   comment,
   signListOfMyTask,
   isTodayTaskSigned,
+  signDelete,
 };

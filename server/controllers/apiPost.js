@@ -292,7 +292,7 @@ const signList = async (ctx) => {
 
 
 const deletePost = async (ctx) => {
-  const result = { success: false, message: '删除活动成功失败', isLogin: false };
+  const result = { success: false, message: '删除活动失败', isLogin: false };
   if (!(ctx.session.user && ctx.session.user.id)) {
     result.message = '请登录后再操作';
     ctx.body = result;
@@ -308,7 +308,7 @@ const deletePost = async (ctx) => {
     result.success = true;
   } catch (exception) {
     console.log('exception: ', exception);
-    result.message = exception.message || '删除活动成功失败';
+    result.message = exception.message || '删除活动失败';
   } finally {
     ctx.body = result;
   }

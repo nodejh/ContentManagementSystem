@@ -11,6 +11,7 @@ router.post('/sign', apiTask.sign);
 router.get('/today/:id', apiTask.today);
 router.post('/comment', apiTask.comment);
 router.get('/isTodayTaskSigned/:todayTaskId', apiTask.isTodayTaskSigned);
+router.post('/signDelete', apiTask.signDelete);
 
 
 module.exports = router;

@@ -78,6 +78,20 @@ const comment = async (payload) => {
 const isTodayTaskSigned = async todayTaskId => request(`/api/v0.1/task/isTodayTaskSigned/${todayTaskId}`);
 
 
+const deleteSign = async (id) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id }),
+    credentials: 'include',
+  };
+  return request('/api/v0.1/task/signDelete', options);
+};
+
+
 export {
   list,
   add,
@@ -87,4 +101,5 @@ export {
   comment,
   signListOfMyTask,
   isTodayTaskSigned,
+  deleteSign,
 };

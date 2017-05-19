@@ -12,7 +12,7 @@ import Button from 'grommet/components/Button';
 import FormFields from 'grommet/components/FormFields';
 import FormField from 'grommet/components/FormField';
 import moment from 'moment';
-import { comment, signListOfMyTask } from './../models/task';
+import { comment, signListOfMyTask, deleteSign } from './../models/task';
 
 class App extends Component {
   constructor(props) {
@@ -38,6 +38,7 @@ class App extends Component {
     this.onDOMChange = this.onDOMChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.getSignList = this.getSignList.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
 
@@ -121,6 +122,35 @@ class App extends Component {
       toast.show = true;
       toast.status = 'critical';
       toast.message = exception.message || '获取打卡列表失败，请重试';
+      this.setState({ toast });
+    }
+  }
+
+
+  async handleDelete(id) {
+    console.log('id: ', id);
+    const { toast } = this.state;
+    try {
+      const res = await deleteSign(id);
+      // console.log('res: ', res);
+      if (res.success) {
+        // rerender post list
+        toast.status = 'ok';
+        toast.show = true;
+        toast.message = '删除打卡成功';
+        this.setState({ toast });
+        this.getSignList();
+      } else {
+        toast.status = 'critical';
+        toast.show = true;
+        toast.message = '获取活动列表失败，请重试';
+        this.setState({ toast });
+      }
+    } catch (exception) {
+      // console.log('exception: ', exception);
+      toast.show = true;
+      toast.status = 'critical';
+      toast.message = exception.message || '获取活动列表失败，请重试';
       this.setState({ toast });
     }
   }
@@ -215,6 +245,9 @@ class App extends Component {
                         </div>
                       )
                   }
+                  <div style={{ textAlign: 'right' }}>
+                    <button onClick={() => this.handleDelete(item.id)}>删除打卡</button>
+                  </div>
                 </div>
               );
             })
@@ -227,6 +260,7 @@ class App extends Component {
 
 
 App.propTypes = {
+  // eslint-disable-next-line
   match: PropTypes.shape({
     params: PropTypes.shape({
       taskId: PropTypes.string.isRequired,
