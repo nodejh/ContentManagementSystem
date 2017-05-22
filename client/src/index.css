@@ -17,4 +17,6 @@ textarea {
 pre {
     word-wrap: normal;
     width: 100%;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
