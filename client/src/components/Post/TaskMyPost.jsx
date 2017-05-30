@@ -10,11 +10,9 @@ import Loadable from 'react-loading-overlay';
 // import FormField from 'grommet/components/FormField';
 import Button from 'grommet/components/Button';
 import Toast from 'grommet/components/Toast';
-import Image from 'grommet/components/Image';
 import Card from 'grommet/components/Card';
 // import AddIcon from 'grommet/components/icons/base/Add';
-import { list as taskList, add as taskAdd, signList } from './../../models/task';
-// import { signList } from './../models/task';
+import { list as taskList, add as taskAdd } from './../../models/task';
 
 class App extends Component {
 
@@ -39,7 +37,6 @@ class App extends Component {
     this.showTaskHistory = this.showTaskHistory.bind(this);
     this.hideTaskHistory = this.hideTaskHistory.bind(this);
     this.getTaskList = this.getTaskList.bind(this);
-    this.getTodaySignList = this.getTodaySignList.bind(this);
     this.hideToast = this.hideToast.bind(this);
     this.handleAddTask = this.handleAddTask.bind(this);
   }
@@ -74,9 +71,7 @@ class App extends Component {
       const res = await taskList(id);
       // console.log('res: ', res);
       if (res.success) {
-        this.setState({ list: res.list }, () => {
-          this.getTodaySignList();
-        });
+        this.setState({ list: res.list });
       } else {
         toast.show = true;
         toast.status = 'critical';
@@ -87,39 +82,6 @@ class App extends Component {
       toast.show = true;
       toast.status = 'critical';
       toast.message = exception.message || '获取任务表失败，请重新进入该页面';
-      this.setState({ toast });
-    }
-  }
-
-  // get today sign list
-  async getTodaySignList() {
-    const { toast } = this.state;
-    const { list } = this.state;
-    let taskToday = null;
-    // eslint-disable-next-line
-    const taskHistory = list.filter((item) => {
-      if (new Date(item.datetime).toLocaleDateString() === new Date().toLocaleDateString()) {
-        taskToday = item;
-        return false;
-      }
-      return true;
-    });
-    try {
-      const res = await signList(taskToday.id);
-      console.log('res: ', res);
-      if (res.success) {
-        this.setState({ todaySignList: res.signList || [] });
-      } else {
-        toast.show = true;
-        toast.status = 'critical';
-        toast.message = res.message || '获取打卡列表失败，请重试';
-        this.setState({ toast });
-      }
-    } catch (exception) {
-      console.log('exception: ', exception);
-      toast.show = true;
-      toast.status = 'critical';
-      toast.message = exception.message || '获取打卡列表失败，请重试';
       this.setState({ toast });
     }
   }
@@ -227,7 +189,6 @@ class App extends Component {
     });
     console.log('isShowTaskHistory: ', isShowTaskHistory);
     console.log('taskToday: ', taskToday);
-    console.log('todaySignList: ', todaySignList);
     console.log('taskHistory: ', taskHistory);
     return (
       <Loadable
@@ -263,43 +224,12 @@ class App extends Component {
                   </div>
                 )}
               />
-              {/* <Link
+              <Link
                 to={`/signList/${taskToday.id}`}
                 style={{ margin: '20px 10px' }}
               >
                  打卡列表
-               </Link> */}
-              {
-                 // eslint-disable-next-line
-                 todaySignList.length === 0 ? <h3 style={{ textAlign: 'center' }}>暂无打卡记录</h3> : todaySignList.map((item) => {
-                   console.log('item: ', item.datetime);
-                   return (
-                     <div key={item.id} style={{ border: '1px solid #eee', margin: '20px' }}>
-                       {
-                         item.picture && item.picture.split(',').map(picture => (
-                           <Image src={`/upload/album/${picture}`} />
-                         ))
-                       }
-                       <Card
-                         label={`${item.name ? item.name : '匿名'} ${moment(item.datetime).format('YYYY/M/D HH:mm:ss')}`}
-                         description={
-                           (
-                             <pre>{item.description}</pre>
-                           )
-                         }
-                         style={{ border: '1px solid #eee' }}
-                       />
-                       <div style={{ marginTop: 20, marginLeft: 10 }}>
-                         评论:
-                         <p style={{ fontWeight: 900 }}>
-                           {item.comment ? item.comment : '暂无'}
-                         </p>
-                       </div>
-                     </div>
-                   );
-                 })
-              }
-
+               </Link>
               { isShowTodaySignList && (todaySignList.length === 0 ?
                 <p style={{ width: '100%', margin: 10 }}>暂无打卡记录</p>
                 :
