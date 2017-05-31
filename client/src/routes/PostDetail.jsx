@@ -206,7 +206,7 @@ class App extends Component {
                     href="#"
                     style={{ margin: 3 }}
                   />
-                  {index === stateUsers.length - 1 ? '' : '、'}
+                  { index > 4 ? '' : (index === stateUsers.length - 1 ? '' : '、') }...
                 </div>
               );
             })}
