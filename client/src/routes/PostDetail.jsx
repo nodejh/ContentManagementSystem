@@ -196,20 +196,23 @@ class App extends Component {
             <div style={{ display: 'inline', margin: '3px 7px' }}>
               <UserIcon size="xsmall" /><span>{stateUsers.length}人</span>
             </div>
-            {stateUsers.map((item, index) => {
+            {stateUsers.filter((item, index) => {
               console.log('item: ', item);
-              return (
-                // eslint-disable-next-line
-                <div style={{ display: 'inline' }} key={index}>
-                  <Anchor
-                    label={item.name ? item.name : '无名'}
-                    href="#"
-                    style={{ margin: 3 }}
-                  />
-                  { index > 4 ? '' : (index === stateUsers.length - 1 ? '' : '、') }...
-                </div>
-              );
-            })}
+              if (index < 4) {
+                return (
+                  // eslint-disable-next-line
+                  <div style={{ display: 'inline' }} key={index}>
+                    <Anchor
+                      label={item.name ? item.name : '无名'}
+                      href="#"
+                      style={{ margin: 3 }}
+                    />
+                    { index === stateUsers.length - 1 ? '' : '、' }
+                  </div>
+                );
+              }
+              return false;
+            })}等
           </div>
           <div style={{ width: '90%', maxWidth: 500 }}>
             { stateIsJoin ?
