@@ -257,9 +257,9 @@ class App extends Component {
                     <div style={{ margin: 10 }}>
                       <pre>{taskToday.content}</pre>
                     </div>
-                    <span style={{ fontSize: '.8em' }}>
+                    {/* <span style={{ fontSize: '.8em' }}>
                       发布于{moment(taskToday.datetime).format('MM/DD/YYYY h:mm:ss')}
-                    </span>
+                    </span> */}
                   </div>
                 )}
               />
@@ -281,7 +281,9 @@ class App extends Component {
                          ))
                        }
                        <Card
-                         label={`${item.name ? item.name : '匿名'} ${moment(item.datetime).format('YYYY/M/D HH:mm:ss')}`}
+                         // eslint-disable-next-line
+                        //  label={`${item.name ? item.name : '匿名'} ${moment(item.datetime).format('YYYY/M/D HH:mm:ss')}`}
+                         label={`${item.name ? item.name : '匿名'}`}
                          description={
                            (
                              <pre>{item.description}</pre>
@@ -289,12 +291,14 @@ class App extends Component {
                          }
                          style={{ border: '1px solid #eee' }}
                        />
-                       <div style={{ marginTop: 20, marginLeft: 10 }}>
-                         评论:
-                         <p style={{ fontWeight: 900 }}>
-                           {item.comment ? item.comment : '暂无'}
-                         </p>
-                       </div>
+                       {
+                         item.comment ? <div style={{ marginTop: 20, marginLeft: 10 }}>
+                           评论:
+                           <p style={{ fontWeight: 900 }}>
+                             <pre>{item.comment}</pre>
+                           </p>
+                         </div> : ''
+                       }
                      </div>
                    );
                  })
