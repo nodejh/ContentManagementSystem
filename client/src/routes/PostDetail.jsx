@@ -196,9 +196,10 @@ class App extends Component {
             <div style={{ display: 'inline', margin: '3px 7px' }}>
               <UserIcon size="xsmall" /><span>{stateUsers.length}人</span>
             </div>
-            {stateUsers.filter((item, index) => {
+            {stateUsers.map((item, index) => {
               console.log('item: ', item);
               if (index < 4) {
+              // eslint-disable-next-line
                 return (
                   // eslint-disable-next-line
                   <div style={{ display: 'inline' }} key={index}>
@@ -211,7 +212,7 @@ class App extends Component {
                   </div>
                 );
               }
-              return false;
+              return '';
             })}等
           </div>
           <div style={{ width: '90%', maxWidth: 500 }}>
